@@ -1,7 +1,7 @@
 #include "setting.h"
+#include <stdlib.h>
 
-void setting();
-
-void setting(){
-	NUM_STA
+void simSetting(int n, char **argv){
+	int numSTA;
+	numSTA = atoi(argv[2]);
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "setting.h"
 
 int main(int argc, char *argv[]){
 	if(argc>1){
@@ -19,6 +20,8 @@ int main(int argc, char *argv[]){
 	if(argc!=2){
 		printf("The number of options is wrong\n");
 		exit(2);
+	}else{
+		simSetting(argc, argv);
 	}
 
 	return 0;
