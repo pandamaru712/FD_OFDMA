@@ -1,10 +1,7 @@
-#ifndef setting_H
-#define setting_H
+#include "setting.h"
 
 void setting();
 
 void setting(){
-
+	NUM_STA
 }
-
-#endif
