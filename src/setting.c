@@ -3,5 +3,5 @@
 
 void simSetting(int n, char **argv){
 	int numSTA;
-	numSTA = atoi(argv[2]);
+	numSTA = atoi(argv[2]);   //number of STA
 }

@@ -12,6 +12,7 @@ int main(int argc, char *argv[]){
 			"2: 'h' shows help.\n"
 			"3: STA amount.\n"
 			"4: Simulation time (sec).\n"
+			"5: test\n"
 			);
 		}
 		exit(1);   //Showing help.
