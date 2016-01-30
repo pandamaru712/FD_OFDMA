@@ -1,11 +1,11 @@
 #ifndef _nodeInfo_h
 #define _nodeInfo_h
 
-typedef struct{
+typedef struct staInformatioin{
 
 }staInfo;
 
-typedef struct{
+typedef struct apInformation{
 
 }apInfo;
 
