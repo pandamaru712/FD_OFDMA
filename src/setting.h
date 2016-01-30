@@ -1,12 +1,23 @@
 #ifndef _setting_h
 #define _setting_h
 
+#include <unistd.h>
+#include <getopt.h>
+
 typedef enum boolean{
 	false,
 	true
 }bool;
 
+static struct option options[] = {
+	{"help", no_argument, NULL, 'h'},
+	{"std", required_argument, NULL, 's'},
+	{"numSTA", required_argument, NULL, 'n'},
+	{0, 0, 0, 0}
+};
+
 typedef struct standard{
+	char *std;
 	int dataRate;
 	int ackRate;
 	int rtsRate;
@@ -26,7 +37,7 @@ typedef struct standard{
 	int aMsduMax;
 	int aMsduInAMpduMax;
 	int aMpduMax;
-}11Std;
+}std11;
 
 typedef struct specification{
 	int numSTA;
