@@ -6,7 +6,7 @@ extern double gElapsedTime;
 extern std11 gStd;
 extern simSpec gSpec;
 
-void idel(staInfo sta[], apInfo *ap, int *numTx, bool *fEmpty){
+void idle(staInfo sta[], apInfo *ap, int *numTx, bool *fEmpty){
 	int i;
 	int minBackoff = gStd.cwMax;
 	double t;

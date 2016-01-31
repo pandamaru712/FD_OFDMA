@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "checkOption.h"
 
 void checkOption(int argc, char** argv){
@@ -16,10 +17,5 @@ void checkOption(int argc, char** argv){
 			);
 		}
 		exit(1);   //Showing help.
-	}
-
-	if(argc!=2){
-		printf("The number of options is wrong\n");
-		exit(2);
 	}
 }

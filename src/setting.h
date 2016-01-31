@@ -1,9 +1,6 @@
 #ifndef _setting_h
 #define _setting_h
 
-#include <unistd.h>
-#include <getopt.h>
-
 typedef enum boolean{
 	false,
 	true
@@ -15,6 +12,9 @@ typedef struct standard{
 	int ackRate;
 	int rtsRate;
 	int ctsRate;
+	int ackLength;
+	int rtsLength;
+	int ctsLength;
 	int timeAck;
 	int timeRts;
 	int timeCts;
@@ -46,7 +46,7 @@ typedef struct specification{
 	int bufferSizeByte;   //kB
 	int numTrial;
 	int trafficPattern;
-	double lambdaAp;
+	double lambdaAp;   //1/us
 	double lambdaSta;
 
 }simSpec;

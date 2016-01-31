@@ -8,7 +8,7 @@ extern double gElapsedTime;
 extern simSpec gSpec;
 extern std11 gStd;
 
-void txCoiisioin(staInfo sta[], apInfo *ap, int *numTx){
+void txCollision(staInfo sta[], apInfo *ap){
 	int i;
 	int maxFrameLength = 0;
 	int txTimeFrameLength = 0;

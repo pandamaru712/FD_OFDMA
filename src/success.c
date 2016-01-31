@@ -102,7 +102,7 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	gElapsedTime += (double)totalTime;
 }
 
-void afterSucc(staInfo sta[], apInfo *ap, int *numTx){
+void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	int minAfterSucc = 0;
 	int i;
 	*numTx = 0;
