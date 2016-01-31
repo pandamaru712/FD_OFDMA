@@ -1,8 +1,10 @@
 #ifndef _success_h
 #define _success_h
 
-void txSuccess();
+#include "nodeInfo.h"
 
-void afterSuccess();
+void txSuccess(staInfo*, apInfo*, int*);
+
+void afterSuccess(staInfo*, apInfo*, int*);
 
 #endif

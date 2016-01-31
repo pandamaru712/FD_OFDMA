@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
 
 		for(; gElapsedTime<gSpec.simTime*1000000;){
 			if(numTx==1){
-				txSuccess();
+				txSuccess(sta, &ap, &numTx);
 				fEmpty = true;
 				for(int i=0; i<gSpec.numSTA; i++){
 					if(sta[i].buffer[0].lengthMsdu!=0){
@@ -67,13 +67,13 @@ int main(int argc, char *argv[]){
 				if(fEmpty==true){
 					idle(sta, &ap, &numTx, &fEmpty);
 				}
-				afterSuccess();
+				afterSuccess(sta, &ap, &numTx);
 			}else{
 				txCollision();
 				afterCollision();
 			}
 		}
-		simulationResult();
+		simulationResult(sta, &ap, &result, trialID);
 	}
 
 	free(sta);

@@ -1,8 +1,9 @@
 #ifndef _collision_h
 #define _collision_h
+#include "nodeInfo.h"
 
-void txCollision();
+void txCollision(staInfo*, apInfo*);
 
-void afterCollision();
+void afterCollision(staInfo*, apInfo*, int*);
 
 #endif

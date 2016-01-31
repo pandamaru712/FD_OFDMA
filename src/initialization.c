@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "initialization.h"
 #include "setting.h"
+#include "frameGen.h"
 
 extern std11 gStd;
 
@@ -11,6 +12,8 @@ void initializeResult(resultInfo *result){
 	result->aveStaProColl = 0.0;
 	result->apProColl = 0.0;
 	result->aveProColl = 0.0;
+	result->aveStaDelay = 0.0;
+	result->apDelay = 0.0;
 	result->aveDelay = 0.0;
 }
 
@@ -22,6 +25,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 			sta[i].buffer[j].lengthMsdu = 0;
 			sta[i].buffer[j].timeStamp = 0.0;
 		}
+		sta[i].waitFrameLength = traffic(true);
 		sta[i].backoffCount = rand() % (gStd.cwMin + 1);
 		sta[i].retryCount = 0;
 		sta[i].numTxFrame = 0;
@@ -42,6 +46,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		ap->buffer[i].lengthMsdu = 0;
 		ap->buffer[i].timeStamp = 0.0;
 	}
+	ap->waitFrameLength = traffic(false);
 	ap->backoffCount = rand() % (gStd.cwMin + 1);
 	ap->retryCount = 0;
 	ap->numTxFrame = 0;

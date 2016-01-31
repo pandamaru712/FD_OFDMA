@@ -8,6 +8,8 @@ typedef struct resultInformation{
 	double aveStaProColl;
 	double apProColl;
 	double aveProColl;
+	double aveStaDelay;
+	double apDelay;
 	double aveDelay;
 }resultInfo;
 

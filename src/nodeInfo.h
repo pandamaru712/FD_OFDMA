@@ -27,6 +27,7 @@ typedef struct staInformatioin{
 	bool fTx;
 	long sumFrameLengthInBuffer;
 	double sumDelay;
+	int waitFrameLength;
 }staInfo;
 
 typedef struct apInformation{
@@ -46,6 +47,7 @@ typedef struct apInformation{
 	bool fTx;
 	long sumFrameLengthInBuffer;
 	double sumDelay;
+	int waitFrameLength;
 }apInfo;
 
 #endif

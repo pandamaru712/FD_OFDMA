@@ -22,6 +22,8 @@ typedef struct standard{
 	int difs;
 	int eifs;
 	int slot;
+	int afterColl;
+	int afterSucc;
 	int ackTimeout;
 	int ctsTimeout;
 	int retryLimit;
@@ -30,13 +32,18 @@ typedef struct standard{
 	int aMsduMax;
 	int aMsduInAMpduMax;
 	int aMpduMax;
+	int phyHeader;   //us
+	int macService;   //bits
+	int macHeader;   //bytes
+	int macFcs;   //bytes
+	int macTail;   //bytes
 }std11;
 
 typedef struct specification{
 	int numSTA;
 	long simTime;   //us
 	int bufferSize;
-	int bufferSizeByte;
+	int bufferSizeByte;   //kB
 	int numTrial;
 	int trafficPattern;
 	double lambdaAp;
