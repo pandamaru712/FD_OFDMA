@@ -9,13 +9,6 @@ typedef enum boolean{
 	true
 }bool;
 
-static struct option options[] = {
-	{"help", no_argument, NULL, 'h'},
-	{"std", required_argument, NULL, 's'},
-	{"numSTA", required_argument, NULL, 'n'},
-	{0, 0, 0, 0}
-};
-
 typedef struct standard{
 	char *std;
 	int dataRate;
@@ -41,7 +34,7 @@ typedef struct standard{
 
 typedef struct specification{
 	int numSTA;
-	long simTIme;   //us
+	long simTime;   //us
 	int bufferSize;
 	int bufferSizeByte;
 	int numTrial;

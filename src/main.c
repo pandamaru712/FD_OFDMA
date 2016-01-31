@@ -6,10 +6,22 @@
 #include "checkOption.h"
 #include "nodeInfo.h"
 #include "setting.h"
+#include "initialization.h"
+#include "success.h"
+#include "collision.h"
+#include "idle.h"
+#include "result.h"
 
 double gElapsedTime;
 std11 gStd;
 simSpec gSpec;
+
+static struct option options[] = {
+	{"help", no_argument, NULL, 'h'},
+	{"std", required_argument, NULL, 's'},
+	{"numSTA", required_argument, NULL, 'n'},
+	{0, 0, 0, 0}
+};
 
 void simSetting(int, char**);
 
@@ -19,9 +31,13 @@ int main(int argc, char *argv[]){
 	//Apply option values to simulation settings.
 	simSetting(argc,argv);
 
+	staInfo *sta;
+	sta = (staInfo*)malloc(sizeof(staInfo)*gSpec.numSTA);
+	apInfo ap;
+
 	int numTx = 0;
 	int trialID;
-	bool flagEmpty = false;
+	bool fEmpty = false;
 
 	for (trialID=0; trialID<gSpec.numTrial; trialID++){
 		srand(trialID);
@@ -29,6 +45,31 @@ int main(int argc, char *argv[]){
 		initializeValue(&numTx);
 
 		gElapsedTime += (double)gStd.difs;
+		idle();
+
+		for(; gElapsedTime<gSpec.simTime*1000000;){
+			if(numTx==1){
+				txSuccess();
+				fEmpty = true;
+				for(int i=0; i<gSpec.numSTA; i++){
+					if(sta[i].buffer[0].lengthMsdu!=0){
+						fEmpty = false;
+						break;
+					}
+				}
+				if(ap.buffer.lengthMsdu[0]!=0){
+					fEmpty = false;
+				}
+				if(fEmpty==true){
+					idle();
+				}
+				afterSuccess();
+			}else{
+				txCollision();
+				afterCollision();
+			}
+		}
+		simulationResult();
 	}
 
 	return 0;
