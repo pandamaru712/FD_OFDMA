@@ -12,10 +12,40 @@ typedef struct frameInformation{
 
 typedef struct staInformatioin{
 	frameInfo buffer[200];
+	int backoffCount;
+	int cw;
+	int retryCount;
+	long numTxFrame;
+	long numCollFrame;
+	long numLostFrame;
+	long numSuccFrame;
+	long byteSuccFrame;
+	bool fCollNow;
+	int afterColl;
+	bool fSuccNow;
+	int afterSucc;
+	bool fTx;
+	long sumFrameLengthInBuffer;
+	double sumDelay;
 }staInfo;
 
 typedef struct apInformation{
 	frameInfo buffer[200];
+	int backoffCount;
+	int cw;
+	int retryCount;
+	long numTxFrame;
+	long numCollFrame;
+	long numLostFrame;
+	long numSuccFrame;
+	long byteSuccFrame;
+	bool fCollNow;
+	int afterColl;
+	bool fSuccNow;
+	int afterSucc;
+	bool fTx;
+	long sumFrameLengthInBuffer;
+	double sumDelay;
 }apInfo;
 
 #endif

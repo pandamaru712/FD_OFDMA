@@ -34,6 +34,9 @@ int main(int argc, char *argv[]){
 	staInfo *sta;
 	sta = (staInfo*)malloc(sizeof(staInfo)*gSpec.numSTA);
 	apInfo ap;
+	resultInfo result;
+	//Intialize result information.
+	initializeResult(&result);
 
 	int numTx = 0;
 	int trialID;
@@ -41,11 +44,12 @@ int main(int argc, char *argv[]){
 
 	for (trialID=0; trialID<gSpec.numTrial; trialID++){
 		srand(trialID);
-
-		initializeValue(&numTx);
+		numTx = 0;
+		fEmpty = true;
+		initializeNodeInfo(sta, &ap);
 
 		gElapsedTime += (double)gStd.difs;
-		idle();
+		idle(sta, &ap, &numTx, &fEmpty);
 
 		for(; gElapsedTime<gSpec.simTime*1000000;){
 			if(numTx==1){
@@ -57,11 +61,11 @@ int main(int argc, char *argv[]){
 						break;
 					}
 				}
-				if(ap.buffer.lengthMsdu[0]!=0){
+				if(ap.buffer[0].lengthMsdu!=0){
 					fEmpty = false;
 				}
 				if(fEmpty==true){
-					idle();
+					idle(sta, &ap, &numTx, &fEmpty);
 				}
 				afterSuccess();
 			}else{
@@ -72,6 +76,7 @@ int main(int argc, char *argv[]){
 		simulationResult();
 	}
 
+	free(sta);
 	return 0;
 }
 
