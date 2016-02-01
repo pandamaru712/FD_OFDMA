@@ -1,4 +1,4 @@
-FD_OFDMA: main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o
+FD_OFDMA: main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o debug.o
 	gcc -Wall -O2 $^ -o $@
 
 main.o: src/main.c
@@ -25,5 +25,8 @@ result.o: src/result.c
 success.o: src/success.c
 	gcc -c $^
 
+debug.o: src/debug.c
+	gcc -c $^
+
 clean:
-	rm main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o
+	rm main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o debug.o

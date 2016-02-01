@@ -22,7 +22,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 
 	for(i=0; i<gSpec.numSTA; i++){
 		for(j=0; j<200; j++){
-			sta[i].buffer[j].lengthMsdu = 0;
+			sta[i].buffer[j].lengthMsdu = 1500;
 			sta[i].buffer[j].timeStamp = 0.0;
 		}
 		sta[i].waitFrameLength = traffic(true);
@@ -43,7 +43,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	}
 
 	for(i=0; i<200; i++){
-		ap->buffer[i].lengthMsdu = 0;
+		ap->buffer[i].lengthMsdu = 1500;
 		ap->buffer[i].timeStamp = 0.0;
 	}
 	ap->waitFrameLength = traffic(false);

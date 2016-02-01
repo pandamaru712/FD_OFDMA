@@ -10,6 +10,7 @@
 #include "collision.h"
 #include "idle.h"
 #include "result.h"
+#include "debug.h"
 
 double gElapsedTime;
 std11 gStd;
@@ -17,8 +18,10 @@ simSpec gSpec;
 
 static struct option options[] = {
 	{"help", no_argument, NULL, 'h'},
+	{"debug", no_argument, NULL, 'd'},
 	{"std", required_argument, NULL, 's'},
 	{"numSTA", required_argument, NULL, 'n'},
+	{"simTime", required_argument, NULL, 't'},
 	{0, 0, 0, 0}
 };
 
@@ -36,6 +39,11 @@ int main(int argc, char *argv[]){
 	resultInfo result;
 	//Intialize result information.
 	initializeResult(&result);
+
+	if(gSpec.fDebug==true){
+		debug();
+		exit(99);
+	}
 
 	int numTx = 0;
 	int trialID;
@@ -66,6 +74,7 @@ int main(int argc, char *argv[]){
 				if(fEmpty==true){
 					idle(sta, &ap, &numTx, &fEmpty);
 				}
+				//Wrong
 				afterSuccess(sta, &ap, &numTx);
 			}else{
 				txCollision(sta, &ap);
@@ -83,15 +92,24 @@ void simSetting(int argc, char **argv){
 	int opt;
 	int index;
 
+	gSpec.fDebug = false;
+	gSpec.simTime = 10;
+
 	while((opt = getopt_long(argc, argv, "hs:n:", options, &index)) != -1){
 		switch(opt){
 			case 'h':
 				printf(
 					"-h, --help: Show this help.\n"
+					"-d, --debug: Debug mode.\n"
 					"-s, --std: Select standard from a/n/ac.\n"
 					"-n, --numSTA: Number of STAs.\n"
+					"-t, --simTime: Simulation time (sec)\n"
 				);
 				exit(1);
+				break;
+			case 'd':
+				printf("Debug mode.\n");
+				gSpec.fDebug = true;
 				break;
 			case 's':
 				gStd.std = optarg;
@@ -99,7 +117,10 @@ void simSetting(int argc, char **argv){
 				break;
 			case 'n':
 				gSpec.numSTA = atoi(optarg);
-				printf("%d\n", gSpec.numSTA);
+				printf("Number of STA is %d.\n", gSpec.numSTA);
+				break;
+			case 't':
+				gSpec.simTime = atoi(optarg);
 				break;
 			default:
 				printf("Illegal options! \'%c\' \'%c\'\n", opt, optopt);
@@ -121,7 +142,7 @@ void simSetting(int argc, char **argv){
 	gStd.macTail = 6;
 	gStd.timeAck = gStd.phyHeader + 4 * ((gStd.macService + 8 * (gStd.ackLength + gStd.macFcs) + gStd.macTail + (4 * gStd.ackRate - 1)) / (4 * gStd.ackRate));
 	gStd.timeRts = gStd.phyHeader + 4 * ((gStd.macService + 8 * (gStd.rtsLength + gStd.macFcs) + gStd.macTail + (4 * gStd.rtsRate - 1)) / (4 * gStd.rtsRate));
-	gStd.timeAck = gStd.phyHeader + 4 * ((gStd.macService + 8 * (gStd.ctsLength + gStd.macFcs) + gStd.macTail + (4 * gStd.ctsRate - 1)) / (4 * gStd.ctsRate));
+	gStd.timeCts = gStd.phyHeader + 4 * ((gStd.macService + 8 * (gStd.ctsLength + gStd.macFcs) + gStd.macTail + (4 * gStd.ctsRate - 1)) / (4 * gStd.ctsRate));
 	gStd.sifs = 16;
 	gStd.difs = 34;
 	gStd.eifs = gStd.sifs + gStd.timeAck + gStd.difs;
@@ -135,7 +156,7 @@ void simSetting(int argc, char **argv){
 	gStd.cwMax = 1023;
 
 	//gSpec.numSTA = 1;
-	gSpec.simTime = 10;
+	//gSpec.simTime = 10;
 	gSpec.bufferSizeByte = 200;
 	gSpec.numTrial = 1;
 	gSpec.trafficPattern = 0;

@@ -24,14 +24,14 @@ void simulationResult(staInfo sta[], apInfo *ap, resultInfo *result, int trialID
 		rDelay += sta[i].sumDelay;
 	}
 
-	if(rNumFrameTx!=(rNumFrameSucc+rNumFrameColl+rNumFrameLost)){
+	if(rNumFrameTx!=(rNumFrameSucc+rNumFrameColl)){
 		printf("Somthing is wrong.\n");
 	}
-	if(ap->numTxFrame!=(ap->numSuccFrame+ap->numCollFrame+ap->numLostFrame)){
-		printf("Somthing is wrong\n");
+	if(ap->numTxFrame!=(ap->numSuccFrame+ap->numCollFrame)){
+		printf("Somthing is wrong.\n");
 	}
 
-	result->aveStaThroughput += (double)rByteFrameSucc * 8 / gElapsedTime;
+	result->aveStaThroughput += (double)rByteFrameSucc * 8 / gElapsedTime / gSpec.numSTA;
 	result->apThroughput += (double)ap->byteSuccFrame * 8 / gElapsedTime;
 	result->aveThroughput += (double)(rByteFrameSucc + ap->byteSuccFrame) * 8 /gElapsedTime;
 
@@ -44,7 +44,7 @@ void simulationResult(staInfo sta[], apInfo *ap, resultInfo *result, int trialID
 	result->aveDelay += (double)(rDelay + ap->sumDelay) / (rNumFrameSucc + ap->numSuccFrame);
 
 	if(trialID==(gSpec.numTrial-1)){
-		printf("STAからの上りスループットの合計は%f Mbit/s\n", result->aveStaThroughput / gSpec.numTrial);
+		printf("STA1台あたりのスループットは%f Mbit/s\n", result->aveStaThroughput / gSpec.numTrial);
 		printf("APのスループットは%f Mbit/s\n", result->apThroughput / gSpec.numTrial);
 		printf("全端末の合計スループットは%f Mbit/s\n", result->aveThroughput / gSpec.numTrial);
 		printf("STAの平均衝突率は%f \n", result->aveStaProColl / gSpec.numTrial);

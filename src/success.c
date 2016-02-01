@@ -37,7 +37,8 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 					if(sta[i].backoffCount>0){
 						sta[i].backoffCount--;
 					}else{
-						printf("Really?\n");
+						//printf("Really?\n");
+						//Wrong
 					}
 				}
 				sta[i].fSuccNow = false;
@@ -63,7 +64,7 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 				sta[i].byteSuccFrame += sta[i].buffer[0].lengthMsdu;
 				txFrameLength = sta[i].buffer[0].lengthMsdu;
 				sta[i].buffer[0].lengthMsdu = 0;
-				sta[i].sumDelay += (gElapsedTime-sta[i].buffer[0].timeStamp);
+				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
 				sta[i].buffer[0].timeStamp = 0;
 				sta[i].numTxFrame++;
 				sta[i].numSuccFrame++;
@@ -73,20 +74,21 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 					if(sta[i].backoffCount>0){
 						sta[i].backoffCount--;
 					}else{
-						printf("Really?\n");
+						//printf("Really?\n");
+						//Wrong
 					}
 				}
 				sta[i].fSuccNow = false;
-				if(ap->buffer[0].lengthMsdu!=0){
-					if(ap->backoffCount>0){
-						ap->backoffCount--;
-					}else{
-						printf("Really?\n");
-					}
-				}
-				ap->fSuccNow = false;
 			}
 		}
+		if(ap->buffer[0].lengthMsdu!=0){
+			if(ap->backoffCount>0){
+				ap->backoffCount--;
+			}else{
+				//printf("Really?\n");
+			}
+		}
+		ap->fSuccNow = false;
 	}
 
 	txTimeFrameLength = gStd.phyHeader + 4 * ((gStd.macService + 8* (gStd.macHeader + txFrameLength + gStd.macFcs) + gStd.macTail + (4 * gStd.dataRate - 1)) / (4 * gStd.dataRate));
@@ -123,13 +125,14 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 			ap->afterSucc = ap->backoffCount * gStd.slot + gStd.afterSucc;
 			minAfterSucc = ap->afterSucc;
 		}else{
-			ap->afterSucc = ap->backoffCount * gStd.slot + gStd.afterSucc;
+			ap->afterSucc = ap->backoffCount * gStd.slot + gStd.difs;
 			minAfterSucc = ap->afterSucc;
 		}
 	}
 
 	if(minAfterSucc==0){
 		printf("All nodes' buffer is empty.\n");
+		//Wrong
 	}
 
 	for(i=0; i<gSpec.numSTA; i++){
@@ -151,7 +154,11 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
                sta[i].backoffCount -= ((minAfterSucc - gStd.difs) / gStd.slot);
             }
          }
-         if(sta[i].afterSucc == minAfterSucc){
+			if(sta[i].backoffCount<0){
+				sta[i].backoffCount = 0;
+				//Wrong?
+			}
+         if((sta[i].backoffCount==0)&&(sta[i].buffer[0].lengthMsdu!=0)){
             (*numTx)++;
             sta[i].fTx = true;
          }
@@ -169,7 +176,10 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
             ap->backoffCount -= ((minAfterSucc - gStd.difs) / gStd.slot);
          }
       }
-      if(ap->afterSucc == minAfterSucc){
+		if(ap->backoffCount<0){
+			ap->backoffCount = 0;
+		}
+      if((ap->backoffCount==0)&&(ap->buffer[0].lengthMsdu!=0)){
          (*numTx)++;
          ap->fTx = true;
    	}

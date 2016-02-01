@@ -40,15 +40,15 @@ typedef struct standard{
 }std11;
 
 typedef struct specification{
+	bool fDebug;
 	int numSTA;
-	long simTime;   //us
+	long simTime;   //s
 	int bufferSize;
 	int bufferSizeByte;   //kB
 	int numTrial;
 	int trafficPattern;
 	double lambdaAp;   //1/us
 	double lambdaSta;
-
 }simSpec;
 
 #endif
