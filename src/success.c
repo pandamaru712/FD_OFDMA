@@ -10,7 +10,7 @@ extern std11 gStd;
 
 void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	int i;
-	int txFrameLength;
+	int txFrameLength = 0;
 	int txTimeFrameLength;
 	int totalTime;
 	int pairSta = gSpec.numSTA;
@@ -26,12 +26,15 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 
 			ap->sumFrameLengthInBuffer -= ap->buffer[0].lengthMsdu;
 			ap->byteSuccFrame += ap->buffer[0].lengthMsdu;
-			txFrameLength = ap->buffer[0].lengthMsdu;
+			if(txFrameLength<ap->buffer[0].lengthMsdu){
+				txFrameLength = ap->buffer[0].lengthMsdu;
+			}
 			ap->buffer[0].lengthMsdu = 0;
 			ap->sumDelay += (gElapsedTime - ap->buffer[0].timeStamp);
 			ap->buffer[0].timeStamp = 0;
 			ap->numSuccFrame++;
 			ap->numTxFrame++;
+			ap->numPrimFrame++;
 			swapAp(ap);
 		}else{
 			printf("txAP's buffer is empty.\n");
@@ -65,7 +68,9 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 
 				sta[i].sumFrameLengthInBuffer -= sta[i].buffer[0].lengthMsdu;
 				sta[i].byteSuccFrame += sta[i].buffer[0].lengthMsdu;
-				txFrameLength = sta[i].buffer[0].lengthMsdu;
+				if(txFrameLength<sta[i].buffer[0].lengthMsdu){
+					txFrameLength = sta[i].buffer[0].lengthMsdu;
+				}
 				sta[i].buffer[0].lengthMsdu = 0;
 				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
 				sta[i].buffer[0].timeStamp = 0;
@@ -81,7 +86,9 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 
 				sta[i].sumFrameLengthInBuffer -= sta[i].buffer[0].lengthMsdu;
 				sta[i].byteSuccFrame += sta[i].buffer[0].lengthMsdu;
-				txFrameLength = sta[i].buffer[0].lengthMsdu;
+				if(txFrameLength<sta[i].buffer[0].lengthMsdu){
+					txFrameLength = sta[i].buffer[0].lengthMsdu;
+				}
 				sta[i].buffer[0].lengthMsdu = 0;
 				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
 				sta[i].buffer[0].timeStamp = 0;
@@ -129,12 +136,17 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 
 				sta[i].sumFrameLengthInBuffer -= sta[i].buffer[0].lengthMsdu;
 				sta[i].byteSuccFrame += sta[i].buffer[0].lengthMsdu;
-				txFrameLength = sta[i].buffer[0].lengthMsdu;
+				if(txFrameLength<sta[i].buffer[0].lengthMsdu){
+					txFrameLength = sta[i].buffer[0].lengthMsdu;
+				}
 				sta[i].buffer[0].lengthMsdu = 0;
 				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
 				sta[i].buffer[0].timeStamp = 0;
 				sta[i].numTxFrame++;
 				sta[i].numSuccFrame++;
+				if((i==pairSta)&&(pairSta!=gSpec.numSTA)){
+					sta[i].numPrimFrame++;
+				}
 				swapSta(&sta[i]);
 			}else{
 				if(sta[i].buffer[0].lengthMsdu!=0){
@@ -158,7 +170,9 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 
 				ap->sumFrameLengthInBuffer -= ap->buffer[0].lengthMsdu;
 				ap->byteSuccFrame += ap->buffer[0].lengthMsdu;
-				txFrameLength = ap->buffer[0].lengthMsdu;
+				if(txFrameLength<ap->buffer[0].lengthMsdu){
+					txFrameLength = ap->buffer[0].lengthMsdu;
+				}
 				ap->buffer[0].lengthMsdu = 0;
 				ap->sumDelay += (gElapsedTime - ap->buffer[0].timeStamp);
 				ap->buffer[0].timeStamp = 0;
@@ -181,6 +195,10 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 		}
 	}
 
+	if(txFrameLength==0){
+		printf("Frame length error\n");
+		exit(12);
+	}
 	txTimeFrameLength = gStd.phyHeader + 4 * ((gStd.macService + 8* (gStd.macHeader + txFrameLength + gStd.macFcs) + gStd.macTail + (4 * gStd.dataRate - 1)) / (4 * gStd.dataRate));
 	totalTime = txTimeFrameLength + gStd.sifs + gStd.timeAck;
 

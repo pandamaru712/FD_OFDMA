@@ -36,6 +36,7 @@ void txCollision(staInfo sta[], apInfo *ap){
             sta[i].backoffCount = rand() % (sta[i].cw + 1);
             sta[i].numTxFrame++;
             sta[i].numCollFrame++;
+				sta[i].numPrimFrame++;
             sta[i].fCollNow = true;
             sta[i].fTx = false;
          }else{
@@ -68,6 +69,7 @@ void txCollision(staInfo sta[], apInfo *ap){
          ap->backoffCount = rand() % (ap->cw + 1);
          ap->numTxFrame++;
          ap->numCollFrame++;
+			ap->numPrimFrame++;
          ap->fCollNow = true;
          ap->fTx = false;
       }else{

@@ -20,6 +20,11 @@ void swapAp(apInfo *ap){
 	for(i=0; i<numNotZero; i++){
 		ap->buffer[i].lengthMsdu = temp[i].lengthMsdu;
 		ap->buffer[i].timeStamp = temp[i].timeStamp;
+		if(i==0){
+			if(ap->buffer[0].timeStamp==0){
+				ap->buffer[0].timeStamp = gElapsedTime;
+			}
+		}
 	}
 	for(; i<200; i++){
 		ap->buffer[i].lengthMsdu = 0;
@@ -42,6 +47,11 @@ void swapSta(staInfo *sta){
 	for(i=0; i<numNotZero; i++){
 		sta->buffer[i].lengthMsdu = temp[i].lengthMsdu;
 		sta->buffer[i].timeStamp = temp[i].timeStamp;
+		if(i==0){
+			if(sta->buffer[0].timeStamp==0){
+				sta->buffer[0].timeStamp = gElapsedTime;
+			}
+		}
 	}
 	for(; i<200; i++){
 		sta->buffer[i].lengthMsdu = 0;
@@ -62,7 +72,7 @@ void arriveAp(apInfo *ap, int span){
 					break;
 				}
 				ap->buffer[i].lengthMsdu = ap->waitFrameLength;
-				ap->buffer[i].timeStamp = gElapsedTime + timeSum;
+				ap->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
 				ap->sumFrameLengthInBuffer += ap->buffer[i].lengthMsdu;
 				fFirst = false;
 				ap->waitFrameLength = traffic(false);
@@ -72,7 +82,7 @@ void arriveAp(apInfo *ap, int span){
 					break;
 				}
 				ap->buffer[i].lengthMsdu = traffic(false);
-				ap->buffer[i].timeStamp = gElapsedTime + timeSum;
+				ap->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
 				ap->sumFrameLengthInBuffer += ap->buffer[i].lengthMsdu;
 			}
 			if(ap->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
@@ -99,7 +109,7 @@ void arriveSta(staInfo *sta, int span){
 					break;
 				}
 				sta->buffer[i].lengthMsdu = sta->waitFrameLength;
-				sta->buffer[i].timeStamp = gElapsedTime + timeSum;
+				sta->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
 				sta->sumFrameLengthInBuffer += sta->buffer[i].lengthMsdu;
 				fFirst = false;
 				sta->waitFrameLength = traffic(true);
@@ -109,7 +119,7 @@ void arriveSta(staInfo *sta, int span){
 					break;
 				}
 				sta->buffer[i].lengthMsdu = traffic(true);
-				sta->buffer[i].timeStamp = gElapsedTime + timeSum;
+				sta->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
 				sta->sumFrameLengthInBuffer += sta->buffer[i].lengthMsdu;
 			}
 			if(sta->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){

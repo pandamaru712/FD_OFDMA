@@ -24,6 +24,8 @@ static struct option options[] = {
 	{"std", required_argument, NULL, 's'},
 	{"numSTA", required_argument, NULL, 'n'},
 	{"simTime", required_argument, NULL, 't'},
+	{"traffic", required_argument, NULL, 'l'},
+	{"trial", required_argument, NULL, 'r'},
 	{0, 0, 0, 0}
 };
 
@@ -99,49 +101,65 @@ void simSetting(int argc, char **argv){
 	gSpec.simTime = 10;
 	gSpec.fFd = false;
 	gSpec.fOfdma = false;
+	gSpec.trafficPattern = 0;
+	gSpec.numTrial = 1;
+
+	printf("-----Settings-----\n");
 
 	while((opt = getopt_long(argc, argv, "hs:n:", options, &index)) != -1){
 		switch(opt){
 			case 'h':
 				printf(
-					"-h, --help: Show this help.\n"
-					"-d, --debug: Debug mode.\n"
-					"-f, --fd: Full-duplex mode.\n"
-					"-o, --ofdma: OFDMA mode.\n"
-					"-s, --std: Select standard from a/n/ac.\n"
-					"-n, --numSTA: Number of STAs.\n"
-					"-t, --simTime: Simulation time (sec)\n"
+					"   -h, --help: Show this help.\n"
+					"   -d, --debug: Debug mode.\n"
+					"   -f, --fd: Full-duplex mode.\n"
+					"   -o, --ofdma: OFDMA mode.\n"
+					"   -s, --std: Select standard from a/n/ac.\n"
+					"   -n, --numSTA: Number of STAs.\n"
+					"   -t, --simTime: Simulation time (sec)\n"
+					"   -l, --traffic: Traffic Pattern.\n"
 				);
 				exit(1);
 				break;
 			case 'd':
-				printf("Debug mode.\n");
+				printf("   Debug mode.\n");
 				gSpec.fDebug = true;
 				break;
 			case 'f':
-				printf("Full-duplex mode.\n");
+				printf("   Full-duplex mode.\n");
 				gSpec.fFd = true;
 				break;
 			case 'o':
-				printf("OFDMA mode.\n");
+				printf("   OFDMA mode.\n");
 				gSpec.fOfdma = true;
 				break;
 			case 's':
 				gStd.std = optarg;
-				printf("%s\n", gStd.std);
+				printf("   Standard is 11%s.\n", gStd.std);
 				break;
 			case 'n':
 				gSpec.numSTA = atoi(optarg);
-				printf("Number of STA is %d.\n", gSpec.numSTA);
+				printf("   Number of STA is %d.\n", gSpec.numSTA);
 				break;
 			case 't':
 				gSpec.simTime = atoi(optarg);
+				printf("   Simulation time is %d sec.\n", gSpec.simTime);
+				break;
+			case 'l':
+				gSpec.trafficPattern = atoi(optarg);
+				printf("   Traffic Pattern is %d.\n", gSpec.trafficPattern);
+				break;
+			case 'r':
+				gSpec.numTrial = atoi(optarg);
+				printf("   Simulation run %d times.\n", gSpec.numTrial);
 				break;
 			default:
 				printf("Illegal options! \'%c\' \'%c\'\n", opt, optopt);
 				exit(1);
 		}
 	}
+
+	printf("------------------\n");
 
 	if(gSpec.fOfdma==true && gSpec.numSTA<2){
 		printf("Connot OFDMA mode.\n");
@@ -178,8 +196,7 @@ void simSetting(int argc, char **argv){
 	//gSpec.numSTA = 1;
 	//gSpec.simTime = 10;
 	gSpec.bufferSizeByte = 200;
-	gSpec.numTrial = 1;
-	gSpec.trafficPattern = 0;
+	//gSpec.numTrial = 1;
 	gSpec.lambdaAp = 0.1;
 	gSpec.lambdaSta = 0.1;
 }

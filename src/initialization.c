@@ -22,8 +22,15 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 
 	for(i=0; i<gSpec.numSTA; i++){
 		for(j=0; j<200; j++){
-			sta[i].buffer[j].lengthMsdu = 1500;
+			sta[i].buffer[j].lengthMsdu = traffic(true);
 			sta[i].buffer[j].timeStamp = 0.0;
+			if(sta[i].sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
+				sta[i].waitFrameLength = sta[i].buffer[i].lengthMsdu;
+				sta[i].sumFrameLengthInBuffer -= sta[i].buffer[i].lengthMsdu;
+				sta[i].buffer[i].lengthMsdu = 0;
+				sta[i].buffer[i].timeStamp = 0.0;
+				break;
+			}
 		}
 		sta[i].waitFrameLength = traffic(true);
 		sta[i].backoffCount = rand() % (gStd.cwMin + 1);
@@ -32,6 +39,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		sta[i].numCollFrame = 0;
 		sta[i].numLostFrame = 0;
 		sta[i].numSuccFrame = 0;
+		sta[i].numPrimFrame = 0;
 		sta[i].byteSuccFrame = 0;
 		sta[i].fCollNow = false;
 		sta[i].afterColl = 0;
@@ -43,8 +51,15 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	}
 
 	for(i=0; i<200; i++){
-		ap->buffer[i].lengthMsdu = 1500;
+		ap->buffer[i].lengthMsdu = traffic(false);
 		ap->buffer[i].timeStamp = 0.0;
+		if(ap->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
+			ap->waitFrameLength = ap->buffer[i].lengthMsdu;
+			ap->sumFrameLengthInBuffer -= ap->buffer[i].lengthMsdu;
+			ap->buffer[i].lengthMsdu = 0;
+			ap->buffer[i].timeStamp = 0.0;
+			break;
+		}
 	}
 	ap->waitFrameLength = traffic(false);
 	ap->backoffCount = rand() % (gStd.cwMin + 1);
@@ -53,6 +68,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	ap->numCollFrame = 0;
 	ap->numLostFrame = 0;
 	ap->numSuccFrame = 0;
+	ap->numPrimFrame = 0;
 	ap->byteSuccFrame = 0;
 	ap->fCollNow = false;
 	ap->afterColl = 0;

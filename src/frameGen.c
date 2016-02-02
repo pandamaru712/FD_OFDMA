@@ -43,6 +43,7 @@ int traffic(bool isSta){
 			}else{
 				lengthMsdu = 500;
 			}
+			break;
 		default:
 			printf("Traffic pattern error.\n");
 			exit(4);

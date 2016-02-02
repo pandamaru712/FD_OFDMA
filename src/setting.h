@@ -44,7 +44,7 @@ typedef struct specification{
 	bool fFd;
 	bool fOfdma;
 	int numSTA;
-	long simTime;   //s
+	int simTime;   //s
 	int bufferSize;
 	int bufferSizeByte;   //kB
 	int numTrial;

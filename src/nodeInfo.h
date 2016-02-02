@@ -19,6 +19,7 @@ typedef struct staInformatioin{
 	long numCollFrame;
 	long numLostFrame;
 	long numSuccFrame;
+	long numPrimFrame;
 	long byteSuccFrame;
 	bool fCollNow;
 	int afterColl;
@@ -39,6 +40,7 @@ typedef struct apInformation{
 	long numCollFrame;
 	long numLostFrame;
 	long numSuccFrame;
+	long numPrimFrame;
 	long byteSuccFrame;
 	bool fCollNow;
 	int afterColl;
