@@ -13,6 +13,8 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	int txFrameLength;
 	int txTimeFrameLength;
 	int totalTime;
+	int pairSta = gSpec.numSTA;
+	int pairSta2nd = gSpec.numSTA;
 
 	if(ap->fTx==true){
 		if(ap->buffer[0].lengthMsdu!=0){
@@ -31,8 +33,62 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 			ap->numSuccFrame++;
 			ap->numTxFrame++;
 			swapAp(ap);
+		}else{
+			printf("txAP's buffer is empty.\n");
+			exit(5);
+		}
+		if(gSpec.fFd==false){
+			pairSta = gSpec.numSTA;
+		}else{
+			if(gSpec.fOfdma==false){
+				do{
+					pairSta = rand() % gSpec.numSTA;
+					//Wrong
+				}while(sta[pairSta].buffer[0].lengthMsdu==0);
+			}else{
+				do{
+					pairSta = rand() % gSpec.numSTA;
+					//Wrong
+				}while(sta[pairSta].buffer[0].lengthMsdu==0);
+				do{
+					pairSta2nd = rand() % gSpec.numSTA;
+				}while((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd));
+			}
+		}
+		for(i=0; i<gSpec.numSTA; i++){
+			if((gSpec.fOfdma==true) && (i==pairSta2nd)){
+				sta[i].retryCount = 0;
+				sta[i].cw = gStd.cwMin;
+				sta[i].backoffCount = rand() % (sta[i].cw + 1);
+				sta[i].fSuccNow = true;
+				sta[i].fTx = false;
 
-			for(i=0; i<gSpec.numSTA; i++){
+				sta[i].sumFrameLengthInBuffer -= sta[i].buffer[0].lengthMsdu;
+				sta[i].byteSuccFrame += sta[i].buffer[0].lengthMsdu;
+				txFrameLength = sta[i].buffer[0].lengthMsdu;
+				sta[i].buffer[0].lengthMsdu = 0;
+				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
+				sta[i].buffer[0].timeStamp = 0;
+				sta[i].numTxFrame++;
+				sta[i].numSuccFrame++;
+				swapSta(&sta[i]);
+			}else if(i==pairSta){
+				sta[i].retryCount = 0;
+				sta[i].cw = gStd.cwMin;
+				sta[i].backoffCount = rand() % (sta[i].cw + 1);
+				sta[i].fSuccNow = true;
+				sta[i].fTx = false;
+
+				sta[i].sumFrameLengthInBuffer -= sta[i].buffer[0].lengthMsdu;
+				sta[i].byteSuccFrame += sta[i].buffer[0].lengthMsdu;
+				txFrameLength = sta[i].buffer[0].lengthMsdu;
+				sta[i].buffer[0].lengthMsdu = 0;
+				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
+				sta[i].buffer[0].timeStamp = 0;
+				sta[i].numTxFrame++;
+				sta[i].numSuccFrame++;
+				swapSta(&sta[i]);
+			}else{
 				if(sta[i].buffer[0].lengthMsdu!=0){
 					if(sta[i].backoffCount>0){
 						sta[i].backoffCount--;
@@ -43,13 +99,24 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 				}
 				sta[i].fSuccNow = false;
 			}
-		}else{
-			printf("txAP's buffer is empty.\n");
-			exit(5);
 		}
+
 	}else{
 		for(i=0; i<gSpec.numSTA; i++){
 			if(sta[i].fTx==true){
+				pairSta = i;
+				//break;
+			}
+		}
+		if(gSpec.fOfdma==false){
+			pairSta2nd = gSpec.numSTA;
+		}else{
+			do{
+				pairSta2nd = rand() % gSpec.numSTA;
+			}while((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd));
+		}
+		for(i=0; i<gSpec.numSTA; i++){
+			if((i==pairSta) || (i==pairSta2nd)){
 				if(sta[i].buffer[0].lengthMsdu==0){
 					printf("txSTA's buffer is empty.\n");
 					exit(6);
@@ -81,14 +148,37 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 				sta[i].fSuccNow = false;
 			}
 		}
-		if(ap->buffer[0].lengthMsdu!=0){
-			if(ap->backoffCount>0){
-				ap->backoffCount--;
+		if(gSpec.fFd==true){
+			if(ap->buffer[0].lengthMsdu!=0){
+				ap->retryCount = 0;
+				ap->cw = gStd.cwMin;
+				ap->backoffCount = rand() % (ap->cw + 1);
+				ap->fSuccNow = true;
+				ap->fTx = false;
+
+				ap->sumFrameLengthInBuffer -= ap->buffer[0].lengthMsdu;
+				ap->byteSuccFrame += ap->buffer[0].lengthMsdu;
+				txFrameLength = ap->buffer[0].lengthMsdu;
+				ap->buffer[0].lengthMsdu = 0;
+				ap->sumDelay += (gElapsedTime - ap->buffer[0].timeStamp);
+				ap->buffer[0].timeStamp = 0;
+				ap->numSuccFrame++;
+				ap->numTxFrame++;
+				swapAp(ap);
 			}else{
-				//printf("Really?\n");
+				ap->fSuccNow = false;
 			}
+		}else{
+			if(ap->buffer[0].lengthMsdu!=0){
+				if(ap->backoffCount>0){
+					ap->backoffCount--;
+				}else{
+					//printf("Really?\n");
+					//Wrong
+				}
+			}
+			ap->fSuccNow = false;
 		}
-		ap->fSuccNow = false;
 	}
 
 	txTimeFrameLength = gStd.phyHeader + 4 * ((gStd.macService + 8* (gStd.macHeader + txFrameLength + gStd.macFcs) + gStd.macTail + (4 * gStd.dataRate - 1)) / (4 * gStd.dataRate));
@@ -161,7 +251,9 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
          if((sta[i].backoffCount==0)&&(sta[i].buffer[0].lengthMsdu!=0)){
             (*numTx)++;
             sta[i].fTx = true;
-         }
+         }else{
+				sta[i].fTx = false;
+			}
       }
       sta[i].fSuccNow = false;
    }
@@ -182,7 +274,9 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
       if((ap->backoffCount==0)&&(ap->buffer[0].lengthMsdu!=0)){
          (*numTx)++;
          ap->fTx = true;
-   	}
+   	}else{
+			ap->fTx = false;
+		}
    }
    ap->fSuccNow = false;
 

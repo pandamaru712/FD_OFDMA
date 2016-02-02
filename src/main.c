@@ -19,6 +19,8 @@ simSpec gSpec;
 static struct option options[] = {
 	{"help", no_argument, NULL, 'h'},
 	{"debug", no_argument, NULL, 'd'},
+	{"fd", no_argument, NULL, 'f'},
+	{"ofdma", no_argument, NULL, 'o'},
 	{"std", required_argument, NULL, 's'},
 	{"numSTA", required_argument, NULL, 'n'},
 	{"simTime", required_argument, NULL, 't'},
@@ -42,6 +44,7 @@ int main(int argc, char *argv[]){
 
 	if(gSpec.fDebug==true){
 		debug();
+		printf("End debug.\n");
 		exit(99);
 	}
 
@@ -94,6 +97,8 @@ void simSetting(int argc, char **argv){
 
 	gSpec.fDebug = false;
 	gSpec.simTime = 10;
+	gSpec.fFd = false;
+	gSpec.fOfdma = false;
 
 	while((opt = getopt_long(argc, argv, "hs:n:", options, &index)) != -1){
 		switch(opt){
@@ -101,6 +106,8 @@ void simSetting(int argc, char **argv){
 				printf(
 					"-h, --help: Show this help.\n"
 					"-d, --debug: Debug mode.\n"
+					"-f, --fd: Full-duplex mode.\n"
+					"-o, --ofdma: OFDMA mode.\n"
 					"-s, --std: Select standard from a/n/ac.\n"
 					"-n, --numSTA: Number of STAs.\n"
 					"-t, --simTime: Simulation time (sec)\n"
@@ -110,6 +117,14 @@ void simSetting(int argc, char **argv){
 			case 'd':
 				printf("Debug mode.\n");
 				gSpec.fDebug = true;
+				break;
+			case 'f':
+				printf("Full-duplex mode.\n");
+				gSpec.fFd = true;
+				break;
+			case 'o':
+				printf("OFDMA mode.\n");
+				gSpec.fOfdma = true;
 				break;
 			case 's':
 				gStd.std = optarg;
@@ -126,6 +141,11 @@ void simSetting(int argc, char **argv){
 				printf("Illegal options! \'%c\' \'%c\'\n", opt, optopt);
 				exit(1);
 		}
+	}
+
+	if(gSpec.fOfdma==true && gSpec.numSTA<2){
+		printf("Connot OFDMA mode.\n");
+		exit(10);
 	}
 
 	gStd.dataRate = 54;

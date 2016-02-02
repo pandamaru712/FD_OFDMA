@@ -146,7 +146,9 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
       	if((sta[i].backoffCount==0)&&(sta[i].buffer[0].lengthMsdu!=0)){
             (*numTx)++;
             sta[i].fTx = true;
-         }
+         }else{
+				sta[i].fTx = false;
+			}
          sta[i].fCollNow = false;
       }
    }
@@ -167,7 +169,9 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
       if((ap->backoffCount==0)&&(ap->buffer[0].lengthMsdu!=0)){
          (*numTx)++;
          ap->fTx = true;
-      }
+      }else{
+			ap->fTx = false;
+		}
       ap->fCollNow = false;
    }
 

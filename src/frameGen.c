@@ -31,10 +31,20 @@ int traffic(bool isSta){
 
 	switch(gSpec.trafficPattern){
 		case 0:
-			lengthMsdu = 1500;
+			if(isSta==false){
+				lengthMsdu = 1500;
+			}else{
+				lengthMsdu = 1500;
+			}
 			break;
+		case 1:
+			if(isSta==false){
+				lengthMsdu = 1500;
+			}else{
+				lengthMsdu = 500;
+			}
 		default:
-			printf("Traffic pattern error.");
+			printf("Traffic pattern error.\n");
 			exit(4);
 			break;
 	}

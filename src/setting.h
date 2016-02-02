@@ -41,6 +41,8 @@ typedef struct standard{
 
 typedef struct specification{
 	bool fDebug;
+	bool fFd;
+	bool fOfdma;
 	int numSTA;
 	long simTime;   //s
 	int bufferSize;

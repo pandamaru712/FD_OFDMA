@@ -31,6 +31,8 @@ void simulationResult(staInfo sta[], apInfo *ap, resultInfo *result, int trialID
 		printf("Somthing is wrong.\n");
 	}
 
+	//printf("%ld\n", rByteFrameSucc);
+
 	result->aveStaThroughput += (double)rByteFrameSucc * 8 / gElapsedTime / gSpec.numSTA;
 	result->apThroughput += (double)ap->byteSuccFrame * 8 / gElapsedTime;
 	result->aveThroughput += (double)(rByteFrameSucc + ap->byteSuccFrame) * 8 /gElapsedTime;
