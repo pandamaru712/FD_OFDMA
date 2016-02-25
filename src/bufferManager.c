@@ -4,6 +4,7 @@
 
 extern double gElapsedTime;
 extern simSpec gSpec;
+extern FILE *gFileSta;
 
 void swapAp(apInfo *ap){
 	int i;
@@ -72,13 +73,18 @@ void arriveAp(apInfo *ap, int span){
 					break;
 				}
 				ap->buffer[i].lengthMsdu = ap->waitFrameLength;
-				ap->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
+				if(i==0){
+					ap->buffer[i].timeStamp = gElapsedTime + timeSum;
+				}else{
+					ap->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
+				}
 				ap->sumFrameLengthInBuffer += ap->buffer[i].lengthMsdu;
 				fFirst = false;
-				ap->waitFrameLength = traffic(false);
+				//ap->waitFrameLength = traffic(false);
 			}else{
 				timeSum += poisson(false);
 				if(timeSum>span){
+					ap->waitFrameLength = traffic(false);
 					break;
 				}
 				ap->buffer[i].lengthMsdu = traffic(false);
@@ -109,13 +115,19 @@ void arriveSta(staInfo *sta, int span){
 					break;
 				}
 				sta->buffer[i].lengthMsdu = sta->waitFrameLength;
-				sta->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
+				if(i==0){
+					sta->buffer[i].timeStamp = gElapsedTime + timeSum;
+				}else{
+					sta->buffer[i].timeStamp = 0;
+					//gElapsedTime + timeSum;
+				}
 				sta->sumFrameLengthInBuffer += sta->buffer[i].lengthMsdu;
 				fFirst = false;
-				sta->waitFrameLength = traffic(true);
+				//sta->waitFrameLength = traffic(true);
 			}else{
 				timeSum += poisson(false);
 				if(timeSum>span){
+					sta->waitFrameLength = traffic(true);
 					break;
 				}
 				sta->buffer[i].lengthMsdu = traffic(true);

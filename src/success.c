@@ -3,13 +3,14 @@
 #include "success.h"
 #include "setting.h"
 #include "bufferManager.h"
+#include "debug.h"
 
 extern double gElapsedTime;
 extern simSpec gSpec;
 extern std11 gStd;
 
 void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
-	int i;
+	int i, j=0;
 	int txFrameLength = 0;
 	int txTimeFrameLength;
 	int totalTime;
@@ -46,16 +47,29 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 			if(gSpec.fOfdma==false){
 				do{
 					pairSta = rand() % gSpec.numSTA;
+					j++;
 					//Wrong
-				}while(sta[pairSta].buffer[0].lengthMsdu==0);
+				}while(sta[pairSta].buffer[0].lengthMsdu==0 && j<100);
+				if(j==100){
+					pairSta = gSpec.numSTA;
+				}
 			}else{
 				do{
 					pairSta = rand() % gSpec.numSTA;
+					j++;
 					//Wrong
-				}while(sta[pairSta].buffer[0].lengthMsdu==0);
+				}while(sta[pairSta].buffer[0].lengthMsdu==0 && j<100);
+				if(j==100){
+					pairSta = gSpec.numSTA;
+				}
+				j=0;
 				do{
 					pairSta2nd = rand() % gSpec.numSTA;
-				}while((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd));
+					j++;
+				}while(((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd))&&j<100);
+				if(j==100){
+					pairSta2nd = gSpec.numSTA;
+				}
 			}
 		}
 		for(i=0; i<gSpec.numSTA; i++){
@@ -72,6 +86,7 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 					txFrameLength = sta[i].buffer[0].lengthMsdu;
 				}
 				sta[i].buffer[0].lengthMsdu = 0;
+				//printf("%f\n", sta[i].buffer[0].timeStamp);
 				sta[i].sumDelay += (gElapsedTime - sta[i].buffer[0].timeStamp);
 				sta[i].buffer[0].timeStamp = 0;
 				sta[i].numTxFrame++;
@@ -112,7 +127,8 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 		for(i=0; i<gSpec.numSTA; i++){
 			if(sta[i].fTx==true){
 				pairSta = i;
-				//break;
+				//debugSta(&sta[pairSta]);
+				break;
 			}
 		}
 		if(gSpec.fOfdma==false){
@@ -120,7 +136,11 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 		}else{
 			do{
 				pairSta2nd = rand() % gSpec.numSTA;
-			}while((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd));
+				j++;
+			}while(((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd))&&j<100);
+			if(j==100){
+				pairSta2nd = gSpec.numSTA;
+			}
 		}
 		for(i=0; i<gSpec.numSTA; i++){
 			if((i==pairSta) || (i==pairSta2nd)){

@@ -53,4 +53,6 @@ typedef struct specification{
 	double lambdaSta;
 }simSpec;
 
+void simSetting(int, char**);
+
 #endif

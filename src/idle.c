@@ -50,13 +50,17 @@ void idle(staInfo sta[], apInfo *ap, int *numTx, bool *fEmpty){
 			ap->buffer[0].lengthMsdu = traffic(isSta);
 			ap->buffer[0].timeStamp = gElapsedTime + t;
 			ap->sumFrameLengthInBuffer += ap->buffer[0].lengthMsdu;
+			ap->fTx = true;
+			*numTx = 1;
 		}else{
 			//Arrive frame to sta[nodeID].
 			isSta = true;
 			t = poisson(isSta);
 			sta[nodeID].buffer[0].lengthMsdu = traffic(isSta);
 			sta[nodeID].buffer[0].timeStamp = gElapsedTime + t;
-			ap->sumFrameLengthInBuffer += sta[nodeID].buffer[0].lengthMsdu;
+			sta[nodeID].sumFrameLengthInBuffer += sta[nodeID].buffer[0].lengthMsdu;
+			sta[nodeID].fTx = true;
+			*numTx = 1;
 		}
 		gElapsedTime += t;
 	}
