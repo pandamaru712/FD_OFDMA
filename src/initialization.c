@@ -2,6 +2,7 @@
 #include "initialization.h"
 #include "setting.h"
 #include "frameGen.h"
+#include "macro.h"
 
 extern std11 gStd;
 
@@ -21,7 +22,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	int i, j;
 
 	for(i=0; i<gSpec.numSTA; i++){
-		for(j=0; j<200; j++){
+		for(j=0; j<BUFFER_SIZE; j++){
 			sta[i].buffer[j].lengthMsdu = 0;
 			sta[i].buffer[j].timeStamp = 0.0;
 			/*if(sta[i].sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
@@ -50,9 +51,13 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		sta[i].fTx = false;
 		sta[i].sumFrameLengthInBuffer = 0;
 		sta[i].sumDelay = 0.0;
+		sta[i].x = (double)(rand() % 1000 + 1) / 10;
+		sta[i].y = (double)(rand() % 1000 + 1) / 10;
+		sta[i].txPower = 20.0;   //dBm
+		sta[i].antennaGain = 2.0;   //dBi
 	}
 
-	for(i=0; i<200; i++){
+	for(i=0; i<BUFFER_SIZE; i++){
 		ap->buffer[i].lengthMsdu = traffic(false);
 		ap->buffer[i].timeStamp = 0.0;
 		/*if(ap->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
@@ -81,4 +86,8 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	ap->fTx = false;
 	ap->sumFrameLengthInBuffer = 0;
 	ap->sumDelay = 0.0;
+	ap->x = 0.0;
+	ap->y = 0.0;
+	ap->txPower = 20.0;
+	ap->antennaGain = 2.0;
 }

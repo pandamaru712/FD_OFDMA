@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include "setting.h"
+#include "macro.h"
 
 extern simSpec gSpec;
 extern std11 gStd;
@@ -17,6 +18,7 @@ static struct option options[] = {
 	{"traffic", required_argument, NULL, 'l'},
 	{"trial", required_argument, NULL, 'r'},
 	{"lambdaSta", required_argument, NULL, 'm'},
+	{"delay", required_argument, NULL, 'a'},
 	{0, 0, 0, 0}
 };
 
@@ -31,10 +33,11 @@ void simSetting(int argc, char **argv){
 	gSpec.trafficPattern = 0;
 	gSpec.numTrial = 1;
 	gSpec.lambdaSta = 0.1;
+	gSpec.delayMode = 0;   //from arriving at buffer to transmitting
 
 	printf("-----Settings-----\n");
 
-	while((opt = getopt_long(argc, argv, "hdfos:n:t:l:r:m:", options, &index)) != -1){
+	while((opt = getopt_long(argc, argv, "hdfos:n:t:l:r:m:a:", options, &index)) != -1){
 		switch(opt){
 			case 'h':
 				printf(
@@ -48,6 +51,7 @@ void simSetting(int argc, char **argv){
 					"   -l, --traffic: Traffic Pattern.\n"
 					"   -r, --trial: number of Simulation runs\n"
 					"   -m, --lambdaSta: Lambda of STA (/us)\n"
+					"   -a, --delay: delayMode (0/1)."
 				);
 				exit(1);
 				break;
@@ -86,6 +90,10 @@ void simSetting(int argc, char **argv){
 			case 'r':
 				gSpec.numTrial = atoi(optarg);
 				printf("   Simulation run %d times.\n", gSpec.numTrial);
+				break;
+			case 'a':
+				gSpec.delayMode = atoi(optarg);
+				printf("   Delay Mode is %d.\n", gSpec.delayMode);
 				break;
 			default:
 				printf("Illegal options! \'%c\' \'%c\'\n", opt, optopt);

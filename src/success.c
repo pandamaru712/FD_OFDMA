@@ -164,7 +164,7 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 				sta[i].buffer[0].timeStamp = 0;
 				sta[i].numTxFrame++;
 				sta[i].numSuccFrame++;
-				if((i==pairSta)&&(pairSta!=gSpec.numSTA)){
+				if(i==pairSta){
 					sta[i].numPrimFrame++;
 				}
 				swapSta(&sta[i]);
@@ -286,7 +286,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 				sta[i].backoffCount = 0;
 				//Wrong?
 			}
-         if((sta[i].backoffCount==0)&&(sta[i].buffer[0].lengthMsdu!=0)){
+         if(sta[i].backoffCount==0/*sta[i].afterSucc==minAfterSucc*/){
             (*numTx)++;
             sta[i].fTx = true;
          }else{
@@ -309,7 +309,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 		if(ap->backoffCount<0){
 			ap->backoffCount = 0;
 		}
-      if((ap->backoffCount==0)&&(ap->buffer[0].lengthMsdu!=0)){
+      if(ap->backoffCount==0/*ap->afterSucc==minAfterSucc*/){
          (*numTx)++;
          ap->fTx = true;
    	}else{

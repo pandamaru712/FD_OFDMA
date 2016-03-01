@@ -2,6 +2,7 @@
 #define _nodeInfo_h
 
 #include "setting.h"
+#include "macro.h"
 
 extern simSpec gSpec;
 
@@ -11,7 +12,7 @@ typedef struct frameInformation{
 }frameInfo;
 
 typedef struct staInformatioin{
-	frameInfo buffer[200];
+	frameInfo buffer[BUFFER_SIZE];
 	int backoffCount;
 	int cw;
 	int retryCount;
@@ -29,10 +30,14 @@ typedef struct staInformatioin{
 	long sumFrameLengthInBuffer;
 	double sumDelay;
 	int waitFrameLength;
+	double x;
+	double y;
+	double txPower;
+	double antennaGain;
 }staInfo;
 
 typedef struct apInformation{
-	frameInfo buffer[200];
+	frameInfo buffer[BUFFER_SIZE];
 	int backoffCount;
 	int cw;
 	int retryCount;
@@ -50,6 +55,10 @@ typedef struct apInformation{
 	long sumFrameLengthInBuffer;
 	double sumDelay;
 	int waitFrameLength;
+	double x;
+	double y;
+	double txPower;
+	double antennaGain;
 }apInfo;
 
 #endif

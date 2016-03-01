@@ -56,6 +56,7 @@ int main(int argc, char *argv[]){
 
 		gElapsedTime = (double)gStd.difs;
 		idle(sta, &ap, &numTx, &fEmpty);
+		//Wrong? fEmpty=true?
 
 		for(; gElapsedTime<gSpec.simTime*1000000;){
 			if(numTx==1){

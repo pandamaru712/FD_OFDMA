@@ -51,6 +51,7 @@ typedef struct specification{
 	int trafficPattern;
 	double lambdaAp;   //1/us
 	double lambdaSta;
+	int delayMode;
 }simSpec;
 
 void simSetting(int, char**);

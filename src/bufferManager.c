@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "bufferManager.h"
 #include "frameGen.h"
+#include "macro.h"
 
 extern double gElapsedTime;
 extern simSpec gSpec;
@@ -9,10 +11,13 @@ extern FILE *gFileSta;
 void swapAp(apInfo *ap){
 	int i;
 	int numNotZero = 0;
-	frameInfo temp[200] = {};
+	frameInfo temp[BUFFER_SIZE] = {};
 
-	for(i=0; i<200; i++){
+	for(i=0; i<BUFFER_SIZE; i++){
 		if(ap->buffer[i].lengthMsdu!=0){
+			if(i==0){
+				printf("Error");
+			}
 			temp[numNotZero].lengthMsdu = ap->buffer[i].lengthMsdu;
 			temp[numNotZero].timeStamp = ap->buffer[i].timeStamp;
 			numNotZero++;
@@ -21,13 +26,18 @@ void swapAp(apInfo *ap){
 	for(i=0; i<numNotZero; i++){
 		ap->buffer[i].lengthMsdu = temp[i].lengthMsdu;
 		ap->buffer[i].timeStamp = temp[i].timeStamp;
-		if(i==0){
-			if(ap->buffer[0].timeStamp==0){
-				ap->buffer[0].timeStamp = gElapsedTime;
+		if(gSpec.delayMode==1){
+			if(i==0){
+				if(ap->buffer[0].timeStamp==0){
+					ap->buffer[0].timeStamp = gElapsedTime;
+				}else{
+					printf("Time Stamp Error.");
+					exit(40);
+				}
 			}
 		}
 	}
-	for(; i<200; i++){
+	for(; i<BUFFER_SIZE; i++){
 		ap->buffer[i].lengthMsdu = 0;
 		ap->buffer[i].timeStamp = 0;
 	}
@@ -36,9 +46,9 @@ void swapAp(apInfo *ap){
 void swapSta(staInfo *sta){
 	int i;
 	int numNotZero = 0;
-	frameInfo temp[200] = {};
+	frameInfo temp[BUFFER_SIZE] = {};
 
-	for(i=0; i<200; i++){
+	for(i=0; i<BUFFER_SIZE; i++){
 		if(sta->buffer[i].lengthMsdu!=0){
 			temp[numNotZero].lengthMsdu = sta->buffer[i].lengthMsdu;
 			temp[numNotZero].timeStamp = sta->buffer[i].timeStamp;
@@ -48,13 +58,19 @@ void swapSta(staInfo *sta){
 	for(i=0; i<numNotZero; i++){
 		sta->buffer[i].lengthMsdu = temp[i].lengthMsdu;
 		sta->buffer[i].timeStamp = temp[i].timeStamp;
-		if(i==0){
-			if(sta->buffer[0].timeStamp==0){
-				sta->buffer[0].timeStamp = gElapsedTime;
+
+		if(gSpec.delayMode==1){
+			if(i==0){
+				if(sta->buffer[0].timeStamp==0){
+					sta->buffer[0].timeStamp = gElapsedTime;
+				}else{
+					printf("Time Stamp Error.");
+					exit(40);
+				}
 			}
 		}
 	}
-	for(; i<200; i++){
+	for(; i<BUFFER_SIZE; i++){
 		sta->buffer[i].lengthMsdu = 0;
 		sta->buffer[i].timeStamp = 0;
 	}
@@ -65,7 +81,7 @@ void arriveAp(apInfo *ap, int span){
 	bool fFirst = true;
 	double timeSum = 0.0;
 
-	for(i=0; i<200; i++){
+	for(i=0; i<BUFFER_SIZE; i++){
 		if(ap->buffer[i].lengthMsdu==0){
 			if(fFirst==true){
 				timeSum = poisson(false);
@@ -73,10 +89,10 @@ void arriveAp(apInfo *ap, int span){
 					break;
 				}
 				ap->buffer[i].lengthMsdu = ap->waitFrameLength;
-				if(i==0){
+				if(i==0 || gSpec.delayMode==0){
 					ap->buffer[i].timeStamp = gElapsedTime + timeSum;
 				}else{
-					ap->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
+					ap->buffer[i].timeStamp = 0;
 				}
 				ap->sumFrameLengthInBuffer += ap->buffer[i].lengthMsdu;
 				fFirst = false;
@@ -88,7 +104,14 @@ void arriveAp(apInfo *ap, int span){
 					break;
 				}
 				ap->buffer[i].lengthMsdu = traffic(false);
-				ap->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
+				if(gSpec.delayMode==0){
+					ap->buffer[i].timeStamp = gElapsedTime + timeSum;
+				}else if(gSpec.delayMode==1){
+					ap->buffer[i].timeStamp = 0;
+				}else{
+					printf("Delay Mode Error.\n");
+					exit(41);
+				}
 				ap->sumFrameLengthInBuffer += ap->buffer[i].lengthMsdu;
 			}
 			if(ap->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
@@ -107,7 +130,7 @@ void arriveSta(staInfo *sta, int span){
 	bool fFirst = true;
 	double timeSum = 0.0;
 
-	for(i=0; i<200; i++){
+	for(i=0; i<BUFFER_SIZE; i++){
 		if(sta->buffer[i].lengthMsdu==0){
 			if(fFirst==true){
 				timeSum = poisson(true);
@@ -115,11 +138,10 @@ void arriveSta(staInfo *sta, int span){
 					break;
 				}
 				sta->buffer[i].lengthMsdu = sta->waitFrameLength;
-				if(i==0){
+				if(i==0 || gSpec.delayMode==0){
 					sta->buffer[i].timeStamp = gElapsedTime + timeSum;
 				}else{
 					sta->buffer[i].timeStamp = 0;
-					//gElapsedTime + timeSum;
 				}
 				sta->sumFrameLengthInBuffer += sta->buffer[i].lengthMsdu;
 				fFirst = false;
@@ -131,7 +153,14 @@ void arriveSta(staInfo *sta, int span){
 					break;
 				}
 				sta->buffer[i].lengthMsdu = traffic(true);
-				sta->buffer[i].timeStamp = 0;   //gElapsedTime + timeSum;
+				if(gSpec.delayMode==0){
+					sta->buffer[i].timeStamp = gElapsedTime + timeSum;
+				}else if(gSpec.delayMode==1){
+					sta->buffer[i].timeStamp = 0;
+				}else{
+					printf("Delay Mode Error.\n");
+					exit(41);
+				}
 				sta->sumFrameLengthInBuffer += sta->buffer[i].lengthMsdu;
 			}
 			if(sta->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){

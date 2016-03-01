@@ -26,9 +26,9 @@ void simulationResult(staInfo sta[], apInfo *ap, resultInfo *result, int trialID
 		rDelay += sta[i].sumDelay;
 	}
 
-	if(rNumFrameTx!=(rNumFrameSucc+rNumFrameColl)){
-		printf("Somthing is wrong.\n");
-	}
+	/*if(rNumFrameSucc!=rNumPrimFrame){
+		printf("Somthing is wrong.\n", rNumFrameTx, rNumFrameSucc);
+	}*/
 	if(ap->numTxFrame!=(ap->numSuccFrame+ap->numCollFrame)){
 		printf("Somthing is wrong.\n");
 	}
@@ -43,9 +43,9 @@ void simulationResult(staInfo sta[], apInfo *ap, resultInfo *result, int trialID
 	result->apProColl += (double)ap->numCollFrame / ap->numPrimFrame;
 	result->aveProColl += (double)(rNumFrameColl + ap->numCollFrame) / (rNumPrimFrame + ap->numPrimFrame);
 
-	result->aveStaDelay += (double)rDelay / rNumFrameSucc;
-	result->apDelay += (double)ap->sumDelay / ap->numSuccFrame;
-	result->aveDelay += (double)(rDelay + ap->sumDelay) / (rNumFrameSucc + ap->numSuccFrame);
+	result->aveStaDelay += rDelay / rNumFrameSucc;
+	result->apDelay += ap->sumDelay / ap->numSuccFrame;
+	result->aveDelay += (rDelay + ap->sumDelay) / (rNumFrameSucc + ap->numSuccFrame);
 
 	if(trialID==(gSpec.numTrial-1)){
 		printf("STA1台あたりのスループットは%f Mbit/s\n", result->aveStaThroughput / gSpec.numTrial);
