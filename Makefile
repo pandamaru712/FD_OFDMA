@@ -1,35 +1,61 @@
-FD_OFDMA: main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o debug.o setting.o
-	gcc -Wall -O2 $^ -o $@
+vpath %.c src
+vpath %.h src
 
-main.o: src/main.c
-	gcc -c $^
+CFLAGS = -I src
+OBJDIR = ./objects
 
-bufferManager.o: src/bufferManager.c
-	gcc -c $^
+PROG := FD_OFDMA
+SRCS := main.c bufferManager.c collision.c frameGen.c idle.c initialization.c result.c success.c debug.c setting.c
+OBJS := $(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))
+DEPS := $(SRCS:%.c=%.d)
 
-collision.o: src/collision.c
-	gcc -c $^
+CC := gcc
 
-frameGen.o: src/frameGen.c
-	gcc -c $^
+all: $(PROG)
 
-idle.o: src/idle.c
-	gcc -c $^
+-include $(DEPS)
 
-initialization.o: src/initialization.c
-	gcc -c $^
+$(PROG): $(OBJS)
+	$(CC) $(CFLAGS) -Wall -g -O0 -o $@ $^
 
-result.o: src/result.c
-	gcc -c $^
-
-success.o: src/success.c
-	gcc -c $^
-
-debug.o: src/debug.c
-	gcc -c $^
-
-setting.o: src/setting.c
-	gcc -c $^
+$(OBJDIR)/%.o: %.c
+	@[ -d $(OBJDIR) ]
+	$(CC) -g -MMD -MP -o $@ -c $<
 
 clean:
-	rm main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o debug.o
+	rm -f $(OBJS) $(DEPS)
+
+#	gcc -Wall -g -O0 $^ -o $@
+
+#main.o: src/main.c
+#	gcc -g -c $^
+
+#bufferManager.o: src/bufferManager.c
+#	gcc -g -c $^
+
+#collision.o: src/collision.c
+#	gcc -g -c $^
+
+#frameGen.o: src/frameGen.c
+#	gcc -g -c $^
+
+#idle.o: src/idle.c
+#	gcc -g -c $^
+
+#initialization.o: src/initialization.c
+#	gcc -c -g $^
+
+#result.o: src/result.c
+#	gcc -g -c $^
+
+#success.o: src/success.c
+#	gcc -g -c $^
+
+#debug.o: src/debug.c
+#	gcc -g -c $^
+
+#setting.o: src/setting.c
+#	gcc -g -c $^
+
+#clean:
+#	rm main.o bufferManager.o collision.o frameGen.o idle.o initialization.o result.o success.o debug.o

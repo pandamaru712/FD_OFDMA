@@ -30,10 +30,10 @@ void simulationResult(staInfo sta[], apInfo *ap, resultInfo *result, int trialID
 		printf("Somthing is wrong.\n", rNumFrameTx, rNumFrameSucc);
 	}*/
 	if(ap->numTxFrame!=(ap->numSuccFrame+ap->numCollFrame)){
-		printf("Somthing is wrong.\n");
+		printf("Somthing is wrong.%f\n", gElapsedTime);
 	}
 
-	//printf("%f\n", (double)rByteFrameSucc * 8 / gElapsedTime / gSpec.numSTA);
+	//printf("%f, %f\n", rDelay, ap->sumDelay);
 
 	result->aveStaThroughput += (double)rByteFrameSucc * 8 / gElapsedTime / gSpec.numSTA;
 	result->apThroughput += (double)ap->byteSuccFrame * 8 / gElapsedTime;

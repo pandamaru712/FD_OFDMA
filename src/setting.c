@@ -101,7 +101,7 @@ void simSetting(int argc, char **argv){
 		}
 	}
 
-	printf("------------------\n");
+	//printf("------------------\n");
 
 	if(gSpec.fOfdma==true && gSpec.numSTA<2){
 		printf("Connot OFDMA mode.\n");
@@ -141,4 +141,10 @@ void simSetting(int argc, char **argv){
 	//gSpec.numTrial = 1;
 	gSpec.lambdaAp = 0.1;
 	//gSpec.lambdaSta = 0.1;
+	if(gSpec.trafficPattern==0){
+		printf("   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*1500*8);
+	}else if(gSpec.trafficPattern==1){
+		printf("   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*500*8);
+	}
+	printf("------------------\n");
 }

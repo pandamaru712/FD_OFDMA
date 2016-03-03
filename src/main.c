@@ -47,6 +47,7 @@ int main(int argc, char *argv[]){
 	int numTx = 0;
 	int trialID;
 	bool fEmpty = false;
+	//long int test=0;
 
 	for (trialID=0; trialID<gSpec.numTrial; trialID++){
 		srand(trialID);
@@ -59,6 +60,8 @@ int main(int argc, char *argv[]){
 		//Wrong? fEmpty=true?
 
 		for(; gElapsedTime<gSpec.simTime*1000000;){
+			//test++;
+			//printf("%f\n", gElapsedTime);
 			if(numTx==1){
 				//debugSta(&sta[7],7);
 				txSuccess(sta, &ap, &numTx);

@@ -7,8 +7,8 @@ void swapAp(apInfo*);
 
 void swapSta(staInfo*);
 
-void arriveAp(apInfo*, int);
+void arriveAp(apInfo*, double);
 
-void arriveSta(staInfo*, int);
+void arriveSta(staInfo*, double);
 
 #endif

@@ -82,9 +82,9 @@ void txCollision(staInfo sta[], apInfo *ap){
 	txTimeFrameLength = gStd.phyHeader + 4 * ((gStd.macService + 8* (gStd.macHeader + maxFrameLength + gStd.macFcs) + gStd.macTail + (4 * gStd.dataRate - 1)) / (4 * gStd.dataRate));
 
    for(i=0; i<gSpec.numSTA; i++){
-      arriveSta(&sta[i], txTimeFrameLength);
+      arriveSta(&sta[i], (double)txTimeFrameLength);
    }
-   arriveAp(ap, txTimeFrameLength);
+   arriveAp(ap, (double)txTimeFrameLength);
 
    gElapsedTime += (double)txTimeFrameLength;
 }
@@ -178,9 +178,9 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
    }
 
    for(i=0; i<gSpec.numSTA; i++){
-      arriveSta(&sta[i], minAfterColl);
+      arriveSta(&sta[i], (double)minAfterColl);
    }
-   arriveAp(ap, minAfterColl);
+   arriveAp(ap, (double)minAfterColl);
 
    gElapsedTime += (double)minAfterColl;
 

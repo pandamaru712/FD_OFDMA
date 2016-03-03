@@ -37,6 +37,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		sta[i].sumFrameLengthInBuffer += sta[i].buffer[0].lengthMsdu;
 		sta[i].waitFrameLength = traffic(true);
 		sta[i].backoffCount = rand() % (gStd.cwMin + 1);
+		sta[i].cw = gStd.cwMin;
 		sta[i].retryCount = 0;
 		sta[i].numTxFrame = 0;
 		sta[i].numCollFrame = 0;
@@ -55,10 +56,11 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		sta[i].y = (double)(rand() % 1000 + 1) / 10;
 		sta[i].txPower = 20.0;   //dBm
 		sta[i].antennaGain = 2.0;   //dBi
+		sta[i].timeNextFrame = poisson(true);
 	}
 
 	for(i=0; i<BUFFER_SIZE; i++){
-		ap->buffer[i].lengthMsdu = traffic(false);
+		ap->buffer[i].lengthMsdu = 0;
 		ap->buffer[i].timeStamp = 0.0;
 		/*if(ap->sumFrameLengthInBuffer>(gSpec.bufferSizeByte*1000)){
 			ap->waitFrameLength = ap->buffer[i].lengthMsdu;
@@ -72,6 +74,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	ap->sumFrameLengthInBuffer += ap->buffer[0].lengthMsdu;
 	ap->waitFrameLength = traffic(false);
 	ap->backoffCount = rand() % (gStd.cwMin + 1);
+	ap->cw = gStd.cwMin;
 	ap->retryCount = 0;
 	ap->numTxFrame = 0;
 	ap->numCollFrame = 0;
@@ -90,4 +93,5 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	ap->y = 0.0;
 	ap->txPower = 20.0;
 	ap->antennaGain = 2.0;
+	ap->timeNextFrame = poisson(false);
 }

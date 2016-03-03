@@ -34,6 +34,7 @@ typedef struct staInformatioin{
 	double y;
 	double txPower;
 	double antennaGain;
+	double timeNextFrame;
 }staInfo;
 
 typedef struct apInformation{
@@ -59,6 +60,7 @@ typedef struct apInformation{
 	double y;
 	double txPower;
 	double antennaGain;
+	double timeNextFrame;
 }apInfo;
 
 #endif

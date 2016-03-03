@@ -224,9 +224,9 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 
 
 	for(i=0; i<gSpec.numSTA; i++){
-		arriveSta(&sta[i], totalTime);
+		arriveSta(&sta[i], (double)totalTime);
 	}
-	arriveAp(ap, totalTime);
+	arriveAp(ap, (double)totalTime);
 
 	*numTx = 0;
 	gElapsedTime += (double)totalTime;
@@ -248,8 +248,10 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 			}
 		}
 	}
+
 	if(ap->buffer[0].lengthMsdu!=0){
 		if(ap->fSuccNow==false){
+			//printf("ap, %d\n",ap->backoffCount);
 			ap->afterSucc = ap->backoffCount * gStd.slot + gStd.afterSucc;
 			minAfterSucc = ap->afterSucc;
 		}else{
@@ -319,9 +321,9 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
    ap->fSuccNow = false;
 
 	for(i=0; i<gSpec.numSTA; i++){
-      arriveSta(&sta[i], minAfterSucc);
+      arriveSta(&sta[i], (double)minAfterSucc);
    }
-   arriveAp(ap, minAfterSucc);
-
+   arriveAp(ap, (double)minAfterSucc);
+	
    gElapsedTime += (double)minAfterSucc;
 }
