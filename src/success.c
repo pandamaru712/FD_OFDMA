@@ -243,7 +243,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 				sta[i].afterSucc = sta[i].backoffCount * gStd.slot + gStd.afterSucc;
 				minAfterSucc = sta[i].afterSucc;
 			}else{
-				sta[i].afterSucc = sta[i].backoffCount + gStd.slot + gStd.difs;
+				sta[i].afterSucc = sta[i].backoffCount * gStd.slot + gStd.difs;
 				minAfterSucc = sta[i].afterSucc;
 			}
 		}
@@ -286,9 +286,10 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
          }
 			if(sta[i].backoffCount<0){
 				sta[i].backoffCount = 0;
+				printf("error\n");
 				//Wrong?
 			}
-         if(sta[i].backoffCount==0/*sta[i].afterSucc==minAfterSucc*/){
+         if(/*sta[i].backoffCount==0*/sta[i].afterSucc==minAfterSucc){
             (*numTx)++;
             sta[i].fTx = true;
          }else{
@@ -310,8 +311,9 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
       }
 		if(ap->backoffCount<0){
 			ap->backoffCount = 0;
+			printf("error\n");
 		}
-      if(ap->backoffCount==0/*ap->afterSucc==minAfterSucc*/){
+      if(/*ap->backoffCount==0*/ap->afterSucc==minAfterSucc){
          (*numTx)++;
          ap->fTx = true;
    	}else{
@@ -324,6 +326,6 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
       arriveSta(&sta[i], (double)minAfterSucc);
    }
    arriveAp(ap, (double)minAfterSucc);
-	
+
    gElapsedTime += (double)minAfterSucc;
 }

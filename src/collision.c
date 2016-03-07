@@ -143,16 +143,18 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
          }
 			if(sta[i].backoffCount<0){
 				sta[i].backoffCount = 0;
+				printf("error1\n");
 				//Wrong?
 			}
-      	if(sta[i].backoffCount==0/*sta[i].afterColl==minAfterColl*/){
+      	if(/*sta[i].backoffCount==0*/sta[i].afterColl==minAfterColl){
             (*numTx)++;
             sta[i].fTx = true;
          }else{
 				sta[i].fTx = false;
 			}
-         sta[i].fCollNow = false;
+         //sta[i].fCollNow = false;
       }
+
    }
 
    if(ap->buffer[0].lengthMsdu!=0){
@@ -167,8 +169,9 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
       }
 		if(ap->backoffCount<0){
 			ap->backoffCount = 0;
+			printf("error2\n");
 		}
-      if(ap->backoffCount==0/*ap->afterColl==minAfterColl*/){
+      if(/*ap->backoffCount==0*/ap->afterColl==minAfterColl){
          (*numTx)++;
          ap->fTx = true;
       }else{
