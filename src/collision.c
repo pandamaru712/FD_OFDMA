@@ -154,7 +154,7 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
 			}
          //sta[i].fCollNow = false;
       }
-
+		sta[i].fCollNow = false;
    }
 
    if(ap->buffer[0].lengthMsdu!=0){
