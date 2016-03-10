@@ -35,4 +35,6 @@
 *.d
 *.sh
 .DS_Store
-dash
+dash/
+objects/
+data/
