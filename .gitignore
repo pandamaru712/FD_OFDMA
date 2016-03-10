@@ -32,4 +32,7 @@
 *.dSYM/
 *.txt
 
-.d
+*.d
+*.sh
+.DS_Store
+dash
