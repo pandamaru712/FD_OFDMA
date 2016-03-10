@@ -194,10 +194,13 @@ void arriveSta(staInfo *sta, double span){
 				sta->buffer[i].timeStamp = 0.0;
 				break;
 			}
-			if(i==BUFFER_SIZE){
-				printf("BUFFER_SIZE is not enough.\n");
-				sta->waitFrameLength = traffic(true);
-			}
 		}
 	}
+	/*if(i==BUFFER_SIZE){
+		printf("BUFFER_SIZE is not enough.\n");
+		sta->waitFrameLength = traffic(true);
+	}*/
+	/*if(sta->buffer[BUFFER_SIZE-1].lengthMsdu!=0){
+		printf("Limited2");
+	}*/
 }

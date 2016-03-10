@@ -1,6 +1,8 @@
 #ifndef _setting_h
 #define _setting_h
 
+#include <stdio.h>
+
 typedef enum boolean{
 	false,
 	true
@@ -43,7 +45,7 @@ typedef struct specification{
 	bool fDebug;
 	bool fFd;
 	bool fOfdma;
-	int numSTA;
+	int numSta;
 	int simTime;   //s
 	int bufferSize;
 	int bufferSizeByte;   //kB
@@ -52,6 +54,9 @@ typedef struct specification{
 	double lambdaAp;   //1/us
 	double lambdaSta;
 	int delayMode;
+	bool fOutput;
+	char filename[100];
+	FILE *output;
 }simSpec;
 
 void simSetting(int, char**);

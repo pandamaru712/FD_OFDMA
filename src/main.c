@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 	}
 
 	staInfo *sta;
-	sta = (staInfo*)malloc(sizeof(staInfo)*gSpec.numSTA);
+	sta = (staInfo*)malloc(sizeof(staInfo)*gSpec.numSta);
 	apInfo ap;
 	resultInfo result;
 	//Intialize result information.
@@ -47,7 +47,6 @@ int main(int argc, char *argv[]){
 	int numTx = 0;
 	int trialID;
 	bool fEmpty = false;
-	//long int test=0;
 
 	for (trialID=0; trialID<gSpec.numTrial; trialID++){
 		srand(trialID);
@@ -60,13 +59,11 @@ int main(int argc, char *argv[]){
 		//Wrong? fEmpty=true?
 
 		for(; gElapsedTime<gSpec.simTime*1000000;){
-			//test++;
-			//printf("%f\n", gElapsedTime);
 			if(numTx==1){
 				//debugSta(&sta[7],7);
 				txSuccess(sta, &ap, &numTx);
 				fEmpty = true;
-				for(int i=0; i<gSpec.numSTA; i++){
+				for(int i=0; i<gSpec.numSta; i++){
 					if(sta[i].buffer[0].lengthMsdu!=0){
 						fEmpty = false;
 						break;
@@ -88,6 +85,9 @@ int main(int argc, char *argv[]){
 		simulationResult(sta, &ap, &result, trialID);
 	}
 
+	if(gSpec.fOutput==true){
+		fclose(gSpec.output);
+	}
 	fclose(gFileSta);
 	free(sta);
 	return 0;

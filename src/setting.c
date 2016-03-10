@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
+#include <time.h>
 #include "setting.h"
 #include "macro.h"
 
@@ -13,12 +15,13 @@ static struct option options[] = {
 	{"fd", no_argument, NULL, 'f'},
 	{"ofdma", no_argument, NULL, 'o'},
 	{"std", required_argument, NULL, 's'},
-	{"numSTA", required_argument, NULL, 'n'},
+	{"numSta", required_argument, NULL, 'n'},
 	{"simTime", required_argument, NULL, 't'},
 	{"traffic", required_argument, NULL, 'l'},
 	{"trial", required_argument, NULL, 'r'},
 	{"lambdaSta", required_argument, NULL, 'm'},
 	{"delay", required_argument, NULL, 'a'},
+	{"output",required_argument, NULL, 'u'},
 	{0, 0, 0, 0}
 };
 
@@ -30,14 +33,21 @@ void simSetting(int argc, char **argv){
 	gSpec.simTime = 10;
 	gSpec.fFd = false;
 	gSpec.fOfdma = false;
+	gStd.std = NULL;
+	gSpec.numSta = 10;
 	gSpec.trafficPattern = 0;
 	gSpec.numTrial = 1;
 	gSpec.lambdaSta = 0.1;
 	gSpec.delayMode = 0;   //from arriving at buffer to transmitting
+	gSpec.fOutput = false;
+	memset(gSpec.filename, '\0', strlen(gSpec.filename));
 
-	printf("-----Settings-----\n");
+	time_t timer;
+	struct tm *local;
+	timer = time(NULL);
+	local = localtime(&timer);
 
-	while((opt = getopt_long(argc, argv, "hdfos:n:t:l:r:m:a:", options, &index)) != -1){
+	while((opt = getopt_long(argc, argv, "hdfos:n:t:l:r:m:a:u:", options, &index)) != -1){
 		switch(opt){
 			case 'h':
 				printf(
@@ -46,54 +56,51 @@ void simSetting(int argc, char **argv){
 					"   -f, --fd: Full-duplex mode.\n"
 					"   -o, --ofdma: OFDMA mode.\n"
 					"   -s, --std: Select standard from a/n/ac.\n"
-					"   -n, --numSTA: Number of STAs.\n"
+					"   -n, --numSta: Number of STAs.\n"
 					"   -t, --simTime: Simulation time (sec)\n"
 					"   -l, --traffic: Traffic Pattern.\n"
 					"   -r, --trial: number of Simulation runs\n"
 					"   -m, --lambdaSta: Lambda of STA (/us)\n"
 					"   -a, --delay: delayMode (0/1)."
+					"   -u, --output: Output filename."
 				);
 				exit(1);
 				break;
 			case 'd':
-				printf("   Debug mode.\n");
 				gSpec.fDebug = true;
 				break;
 			case 'f':
-				printf("   Full-duplex mode.\n");
 				gSpec.fFd = true;
 				break;
 			case 'o':
-				printf("   OFDMA mode.\n");
 				gSpec.fOfdma = true;
 				break;
 			case 's':
 				gStd.std = optarg;
-				printf("   Standard is 11%s.\n", gStd.std);
 				break;
 			case 'n':
-				gSpec.numSTA = atoi(optarg);
-				printf("   Number of STA is %d.\n", gSpec.numSTA);
+				gSpec.numSta = atoi(optarg);
 				break;
 			case 't':
 				gSpec.simTime = atoi(optarg);
-				printf("   Simulation time is %d sec.\n", gSpec.simTime);
 				break;
 			case 'l':
 				gSpec.trafficPattern = atoi(optarg);
-				printf("   Traffic Pattern is %d.\n", gSpec.trafficPattern);
 				break;
 			case 'm':
 				gSpec.lambdaSta = atof(optarg);
-				printf("   Lambda of STA is %f /us.\n", gSpec.lambdaSta);
 				break;
 			case 'r':
 				gSpec.numTrial = atoi(optarg);
-				printf("   Simulation run %d times.\n", gSpec.numTrial);
 				break;
 			case 'a':
 				gSpec.delayMode = atoi(optarg);
-				printf("   Delay Mode is %d.\n", gSpec.delayMode);
+				break;
+			case 'u':
+				if(optarg!=NULL){
+					gSpec.fOutput = true;
+					sprintf(gSpec.filename, "data/%s.txt", optarg);
+				}
 				break;
 			default:
 				printf("Illegal options! \'%c\' \'%c\'\n", opt, optopt);
@@ -101,9 +108,77 @@ void simSetting(int argc, char **argv){
 		}
 	}
 
-	//printf("------------------\n");
+	printf("-----Settings-----\n");
+	if(gSpec.fDebug==true){
+		printf("   Debug mode.\n");
+	}
+	if(gSpec.fFd==true){
+		printf("   Full-duplex mode.\n");
+	}
+	if(gSpec.fOfdma==true){
+		printf("   OFDMA mode.\n");
+	}
+	if(gStd.std!=NULL){
+		printf("   Standard is 11%s.\n", gStd.std);
+	}
+	printf("   Number of STA is %d.\n", gSpec.numSta);
+	printf("   Simulation time is %d sec.\n", gSpec.simTime);
+	printf("   Simulation runs %d times.\n", gSpec.numTrial);
+	printf("   Lambda of STA is %f /us.\n", gSpec.lambdaSta);
+	if(gSpec.trafficPattern==0){
+		printf("   Traffic pattern is 1500/1500.\n");
+		printf("   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*1500*8);
+	}else if(gSpec.trafficPattern==1){
+		printf("   Traffic pattern is 1500/500.\n");
+		printf("   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*500*8);
+	}
+	printf("   Delay Mode is %d.\n", gSpec.delayMode);
+	if(gSpec.fOutput==false){
+		printf("   No output files.\n");
+	}else{
+		printf("   Output to %s.\n", gSpec.filename);
+	}
+	printf("------------------\n");
 
-	if(gSpec.fOfdma==true && gSpec.numSTA<2){
+	if(gSpec.fOutput==true){
+		if((gSpec.output=fopen(gSpec.filename, "a"))==NULL){
+			printf("Output file cannot be opened!\n");
+			exit(33);
+		}
+	}
+
+	if(gSpec.fOutput==true){
+		fprintf(gSpec.output, "Simulation ran at %02d/%02d/%02d_%02d:%02d:%02d.\n", local->tm_year-100, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
+		fprintf(gSpec.output, "-----Settings-----\n");
+		if(gSpec.fDebug==true){
+			fprintf(gSpec.output, "   Debug mode.\n");
+		}
+		if(gSpec.fFd==true){
+			fprintf(gSpec.output, "   Full-duplex mode.\n");
+		}
+		if(gSpec.fOfdma==true){
+			fprintf(gSpec.output, "   OFDMA mode.\n");
+		}
+		if(gStd.std!=NULL){
+			fprintf(gSpec.output, "   Standard is 11%s.\n", gStd.std);
+		}
+		fprintf(gSpec.output, "   Number of STA is %d.\n", gSpec.numSta);
+		fprintf(gSpec.output, "   Simulation time is %d sec.\n", gSpec.simTime);
+		fprintf(gSpec.output, "   Simulation runs %d times.\n", gSpec.numTrial);
+		fprintf(gSpec.output, "   Lambda of STA is %f /us.\n", gSpec.lambdaSta);
+		if(gSpec.trafficPattern==0){
+			fprintf(gSpec.output, "   Traffic pattern is 1500/1500.\n");
+			fprintf(gSpec.output, "   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*1500*8);
+		}else if(gSpec.trafficPattern==1){
+			fprintf(gSpec.output, "   Traffic pattern is 1500/500.\n");
+			fprintf(gSpec.output, "   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*500*8);
+		}
+		fprintf(gSpec.output, "   Delay Mode is %d.\n", gSpec.delayMode);
+		fprintf(gSpec.output, "   Output to %s.\n", gSpec.filename);
+		fprintf(gSpec.output, "------------------\n");
+	}
+
+	if(gSpec.fOfdma==true && gSpec.numSta<2){
 		printf("Connot OFDMA mode.\n");
 		exit(10);
 	}
@@ -135,16 +210,6 @@ void simSetting(int argc, char **argv){
 	gStd.cwMin = 15;
 	gStd.cwMax = 1023;
 
-	//gSpec.numSTA = 1;
-	//gSpec.simTime = 10;
 	gSpec.bufferSizeByte = 200;
-	//gSpec.numTrial = 1;
 	gSpec.lambdaAp = 0.1;
-	//gSpec.lambdaSta = 0.1;
-	if(gSpec.trafficPattern==0){
-		printf("   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*1500*8);
-	}else if(gSpec.trafficPattern==1){
-		printf("   Offered load of STA is %f Mbit/s.\n", gSpec.lambdaSta*500*8);
-	}
-	printf("------------------\n");
 }

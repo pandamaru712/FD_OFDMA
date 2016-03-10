@@ -6,7 +6,7 @@ numTrial=10
 trafficPattern=1
 delayMode=0
 fdMode=1
-ofdmaMode=0
+ofdmaMode=1
 lambdaSta=0.0005
 output="test"
 
