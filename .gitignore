@@ -3,6 +3,7 @@
 *.ko
 *.obj
 *.elf
+*.d
 
 # Precompiled Headers
 *.gch
@@ -32,4 +33,5 @@
 *.dSYM/
 *.txt
 
-.d
+#Shell
+*.sh

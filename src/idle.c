@@ -14,7 +14,7 @@ void idle(staInfo sta[], apInfo *ap, int *numTx, bool *fEmpty){
 	bool isSta;
 
 	if(*fEmpty==false){
-		for(i=0; i<gSpec.numSTA; i++){
+		for(i=0; i<gSpec.numSta; i++){
 			if((minBackoff > sta[i].backoffCount)&&(sta[i].buffer[0].lengthMsdu!=0)){
 				minBackoff = sta[i].backoffCount;
 			}
@@ -23,7 +23,7 @@ void idle(staInfo sta[], apInfo *ap, int *numTx, bool *fEmpty){
 			minBackoff = ap->backoffCount;
 		}
 
-		for(i=0; i<gSpec.numSTA; i++){
+		for(i=0; i<gSpec.numSta; i++){
 			if(sta[i].buffer[0].lengthMsdu!=0){
 				sta[i].backoffCount -= minBackoff;
 				if(sta[i].backoffCount==0){
@@ -42,8 +42,8 @@ void idle(staInfo sta[], apInfo *ap, int *numTx, bool *fEmpty){
 
 		gElapsedTime += (double)(gStd.slot * minBackoff);
 	}else{
-		nodeID = rand() % (gSpec.numSTA + 1);
-		if(nodeID==gSpec.numSTA){
+		nodeID = rand() % (gSpec.numSta + 1);
+		if(nodeID==gSpec.numSta){
 			//Arrive frame to AP.
 			isSta = false;
 			t = poisson(isSta);

@@ -14,8 +14,8 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	int txFrameLength = 0;
 	int txTimeFrameLength;
 	int totalTime;
-	int pairSta = gSpec.numSTA;
-	int pairSta2nd = gSpec.numSTA;
+	int pairSta = gSpec.numSta;
+	int pairSta2nd = gSpec.numSta;
 
 	if(ap->fTx==true){
 		if(ap->buffer[0].lengthMsdu!=0){
@@ -42,37 +42,37 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 			exit(5);
 		}
 		if(gSpec.fFd==false){
-			pairSta = gSpec.numSTA;
+			pairSta = gSpec.numSta;
 		}else{
 			if(gSpec.fOfdma==false){
 				do{
-					pairSta = rand() % gSpec.numSTA;
+					pairSta = rand() % gSpec.numSta;
 					j++;
 					//Wrong
 				}while(sta[pairSta].buffer[0].lengthMsdu==0 && j<100);
 				if(j==100){
-					pairSta = gSpec.numSTA;
+					pairSta = gSpec.numSta;
 				}
 			}else{
 				do{
-					pairSta = rand() % gSpec.numSTA;
+					pairSta = rand() % gSpec.numSta;
 					j++;
 					//Wrong
 				}while(sta[pairSta].buffer[0].lengthMsdu==0 && j<100);
 				if(j==100){
-					pairSta = gSpec.numSTA;
+					pairSta = gSpec.numSta;
 				}
 				j=0;
 				do{
-					pairSta2nd = rand() % gSpec.numSTA;
+					pairSta2nd = rand() % gSpec.numSta;
 					j++;
 				}while(((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd))&&j<100);
 				if(j==100){
-					pairSta2nd = gSpec.numSTA;
+					pairSta2nd = gSpec.numSta;
 				}
 			}
 		}
-		for(i=0; i<gSpec.numSTA; i++){
+		for(i=0; i<gSpec.numSta; i++){
 			if((gSpec.fOfdma==true) && (i==pairSta2nd)){
 				sta[i].retryCount = 0;
 				sta[i].cw = gStd.cwMin;
@@ -124,7 +124,7 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 		}
 
 	}else{
-		for(i=0; i<gSpec.numSTA; i++){
+		for(i=0; i<gSpec.numSta; i++){
 			if(sta[i].fTx==true){
 				pairSta = i;
 				//debugSta(&sta[pairSta]);
@@ -132,17 +132,17 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 			}
 		}
 		if(gSpec.fOfdma==false){
-			pairSta2nd = gSpec.numSTA;
+			pairSta2nd = gSpec.numSta;
 		}else{
 			do{
-				pairSta2nd = rand() % gSpec.numSTA;
+				pairSta2nd = rand() % gSpec.numSta;
 				j++;
 			}while(((sta[pairSta2nd].buffer[0].lengthMsdu==0) || (pairSta==pairSta2nd))&&j<100);
 			if(j==100){
-				pairSta2nd = gSpec.numSTA;
+				pairSta2nd = gSpec.numSta;
 			}
 		}
-		for(i=0; i<gSpec.numSTA; i++){
+		for(i=0; i<gSpec.numSta; i++){
 			if((i==pairSta) || (i==pairSta2nd)){
 				if(sta[i].buffer[0].lengthMsdu==0){
 					printf("txSTA's buffer is empty.\n");
@@ -223,7 +223,7 @@ void txSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	totalTime = txTimeFrameLength + gStd.sifs + gStd.timeAck;
 
 
-	for(i=0; i<gSpec.numSTA; i++){
+	for(i=0; i<gSpec.numSta; i++){
 		arriveSta(&sta[i], (double)totalTime);
 	}
 	arriveAp(ap, (double)totalTime);
@@ -237,7 +237,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	int i;
 	*numTx = 0;
 
-	for(i=0; i<gSpec.numSTA; i++){
+	for(i=0; i<gSpec.numSta; i++){
 		if(sta[i].buffer[0].lengthMsdu!=0){
 			if(sta[i].fSuccNow==false){
 				sta[i].afterSucc = sta[i].backoffCount * gStd.slot + gStd.afterSucc;
@@ -265,7 +265,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 		//Wrong
 	}
 
-	for(i=0; i<gSpec.numSTA; i++){
+	for(i=0; i<gSpec.numSta; i++){
 		if((sta[i].afterSucc < minAfterSucc)&&(sta[i].buffer[0].lengthMsdu!=0)){
 			minAfterSucc = sta[i].afterSucc;
 		}
@@ -273,7 +273,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
 	if((ap->afterSucc < minAfterSucc)&&(ap->buffer[0].lengthMsdu!=0)){
 		minAfterSucc = ap->afterSucc;
 	}
-	for(i=0; i<gSpec.numSTA; i++){
+	for(i=0; i<gSpec.numSta; i++){
       if(sta[i].buffer[0].lengthMsdu!=0){
       	if(sta[i].fSuccNow == false){
             if(minAfterSucc > gStd.afterSucc){
@@ -322,7 +322,7 @@ void afterSuccess(staInfo sta[], apInfo *ap, int *numTx){
    }
    ap->fSuccNow = false;
 
-	for(i=0; i<gSpec.numSTA; i++){
+	for(i=0; i<gSpec.numSta; i++){
       arriveSta(&sta[i], (double)minAfterSucc);
    }
    arriveAp(ap, (double)minAfterSucc);

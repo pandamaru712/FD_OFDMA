@@ -13,7 +13,7 @@ void txCollision(staInfo sta[], apInfo *ap){
 	int maxFrameLength = 0;
 	int txTimeFrameLength = 0;
 
-   for(i=0; i<gSpec.numSTA; i++){
+   for(i=0; i<gSpec.numSta; i++){
       if(sta[i].buffer[0].lengthMsdu!=0){
          if(sta[i].fTx==true){
 				if(maxFrameLength < sta[i].buffer[0].lengthMsdu){
@@ -81,7 +81,7 @@ void txCollision(staInfo sta[], apInfo *ap){
 
 	txTimeFrameLength = gStd.phyHeader + 4 * ((gStd.macService + 8* (gStd.macHeader + maxFrameLength + gStd.macFcs) + gStd.macTail + (4 * gStd.dataRate - 1)) / (4 * gStd.dataRate));
 
-   for(i=0; i<gSpec.numSTA; i++){
+   for(i=0; i<gSpec.numSta; i++){
       arriveSta(&sta[i], (double)txTimeFrameLength);
    }
    arriveAp(ap, (double)txTimeFrameLength);
@@ -95,7 +95,7 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
 
    *numTx = 0;
 
-   for(i=0; i<gSpec.numSTA; i++){
+   for(i=0; i<gSpec.numSta; i++){
       if(sta[i].buffer[0].lengthMsdu!=0){
          if(sta[i].fCollNow==false){
             sta[i].afterColl = sta[i].backoffCount * gStd.slot + gStd.afterColl;
@@ -120,7 +120,7 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
       printf("All nodes do not have a frame.\n");
    }
 
-   for(i=0; i<gSpec.numSTA; i++){
+   for(i=0; i<gSpec.numSta; i++){
       if((sta[i].afterColl < minAfterColl)&&(sta[i].buffer[0].lengthMsdu!=0)){
          minAfterColl = sta[i].afterColl;
       }
@@ -130,7 +130,7 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
       minAfterColl = ap->afterColl;
    }
 
-   for(i=0; i<gSpec.numSTA; i++){
+   for(i=0; i<gSpec.numSta; i++){
       if(sta[i].buffer[0].lengthMsdu!=0){
          if(sta[i].fCollNow==false){
             if(minAfterColl>gStd.afterColl){
@@ -180,7 +180,7 @@ void afterCollision(staInfo sta[], apInfo *ap, int *numTx){
       ap->fCollNow = false;
    }
 
-   for(i=0; i<gSpec.numSTA; i++){
+   for(i=0; i<gSpec.numSta; i++){
       arriveSta(&sta[i], (double)minAfterColl);
    }
    arriveAp(ap, (double)minAfterColl);

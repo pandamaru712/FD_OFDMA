@@ -21,7 +21,7 @@ void initializeResult(resultInfo *result){
 void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	int i, j;
 
-	for(i=0; i<gSpec.numSTA; i++){
+	for(i=0; i<gSpec.numSta; i++){
 		for(j=0; j<BUFFER_SIZE; j++){
 			sta[i].buffer[j].lengthMsdu = 0;
 			sta[i].buffer[j].timeStamp = 0.0;
@@ -34,7 +34,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 			}*/
 		}
 		sta[i].buffer[0].lengthMsdu = traffic(true);
-		sta[i].sumFrameLengthInBuffer += sta[i].buffer[0].lengthMsdu;
+		sta[i].sumFrameLengthInBuffer = sta[i].buffer[0].lengthMsdu;
 		sta[i].waitFrameLength = traffic(true);
 		sta[i].backoffCount = rand() % (gStd.cwMin + 1);
 		sta[i].cw = gStd.cwMin;
@@ -50,7 +50,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		sta[i].fSuccNow = false;
 		sta[i].afterSucc = 0;
 		sta[i].fTx = false;
-		sta[i].sumFrameLengthInBuffer = 0;
+		//sta[i].sumFrameLengthInBuffer = 0;
 		sta[i].sumDelay = 0.0;
 		sta[i].x = (double)(rand() % 1000 + 1) / 10;
 		sta[i].y = (double)(rand() % 1000 + 1) / 10;
@@ -71,7 +71,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 		}*/
 	}
 	ap->buffer[0].lengthMsdu = traffic(false);
-	ap->sumFrameLengthInBuffer += ap->buffer[0].lengthMsdu;
+	ap->sumFrameLengthInBuffer = ap->buffer[0].lengthMsdu;
 	ap->waitFrameLength = traffic(false);
 	ap->backoffCount = rand() % (gStd.cwMin + 1);
 	ap->cw = gStd.cwMin;
@@ -87,7 +87,7 @@ void initializeNodeInfo(staInfo sta[], apInfo* ap){
 	ap->fSuccNow = false;
 	ap->afterSucc = 0;
 	ap->fTx = false;
-	ap->sumFrameLengthInBuffer = 0;
+	//ap->sumFrameLengthInBuffer = 0;
 	ap->sumDelay = 0.0;
 	ap->x = 0.0;
 	ap->y = 0.0;

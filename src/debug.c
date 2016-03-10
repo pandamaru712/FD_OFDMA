@@ -20,13 +20,21 @@ void debug(void){
 
 void debugSta(staInfo* sta, int nodeID){
 	int i;
-	if(sta->buffer[0].timeStamp==0){
-		fprintf(gFileSta, "STA %d\n", nodeID);
-	for(i=0; i<BUFFER_SIZE; i++){
-		fprintf(gFileSta, "%d-%f,", sta->buffer[i].lengthMsdu, sta->buffer[i].timeStamp);
-		if(i==199){
+	long test=0;
+
+	for(int i=0; i<BUFFER_SIZE; i++){
+		test += sta->buffer[i].lengthMsdu;
+	}
+	//if(sta->buf!=test){
+		//fprintf(gFileSta, "STA %d\n", nodeID);
+		fprintf(gFileSta, "%ld\n", sta->sumFrameLengthInBuffer);
+		for(i=0; i<BUFFER_SIZE; i++){
+			if(sta->buffer[i].lengthMsdu!=0){
+				fprintf(gFileSta, "%d-%d,", i, sta->buffer[i].lengthMsdu);
+			}
+		}
+		if(i==BUFFER_SIZE){
 			fprintf(gFileSta, "\n**********\n\n\n");
 		}
-	}
-}
+	//}
 }
